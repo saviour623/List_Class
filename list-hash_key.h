@@ -1,55 +1,5 @@
-﻿
-#ifndef GENERIC_LIST
-#define GENERIC_LIST
+﻿#include "clistproto.h"
 
-#include <math.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include "array_constructor.h"
-
-typedef enum {
-  INT_DATA,
-  FLT_DATA
-} TYPE;
-// determine if type is integer or float (1 if true else 0)
-static void logerror(unsigned int signal); /* log error message if debug mode is set */
-
-#define UNUSED(VAR)(void)VAR
-#define list(OBJNAME, ...)\
-  static list_t OBJNAME;\
-  init(&_object, "<list::object>"#_object, _data);\
-  __VA_OPT__(IF_ELSE(PARENTHESIS(__VA_ARGS__)), ARRAY(OBJECTNAME.add, __initobjmem, OBJECTNAME, __VA_ARGS__)\
-	     (ARRAY(OBJECTNAME.add, __initobjmem, OBJECTNAME, (__VA_ARGS__))))
-
-#define uninitialize(_object)(destroy(&_object))
-
-#define type_check(_type)(int)pow(((int)cosl(M_PI * (float)*(double*)(_type))), 2)
-typedef struct genlist genlist;
-typedef struct Object_List Object_List;
-
-struct genlist {
-  void *data;
-  int16_t type;
-  struct genlist *link;
-};
-
-struct Object_List {
-  struct genlist *list;
-  struct genlist *last; //for now it points at list but "last" will always point to end of node
-  struct Object_List *objself;
-  const char * const name;
-  static uintmax_t items;
-
-  void (*add)(struct Object_List *, void *); //will also assign type
-  void (*remove)(struct Object_List *,  ...);
-};
-typedef Object_List list;
-#include "generic.h"
 void init(Object_List *object, static const char * nameoflistobj, void *data){
   _object.name = nameoflistobj;
   object->list = malloc(sizeof(list));
@@ -60,7 +10,7 @@ void init(Object_List *object, static const char * nameoflistobj, void *data){
   object->last = object->list;
 
   object->objself = object;
-  object->add = addData;
+   object->config_addData = addData;
   object->remove = remfromlist;
 }
 
@@ -78,27 +28,26 @@ void destroy(Object_List *objself){
   objself->objself = NULL;
 }
 
-[[noreturn]] static void addData(Object_List *objself, size_t sizeofarr, size_t sizeofsingle_entity, _Bool groupmarker, void *data){
-  genlist *newMemory = malloc(sizeof(genlist));
-  genlist **point2lastlink;
-  if (newMemory == NULL){
-    /* corrupted memory/failed allocation */
-    if (DEBUG_MODE)
-      logerror(SIGALLOC);
-    abort();
-  }
+static void addData(Object *objself, bool pointer, size_t sizeofarr, size_t sizeofsingle_entity, bool groupmarker, void *data){
+  integ *newMemory, **point2lastlink;
   uintptr_t extractFromVoid __attribute__((unused));
   uintptr_t locatorSkip __attribute__((unused));
-  size_t overalsize = sizeofarr / sizeofsingle_entity;
+  size_t overalsize = sizeofsingle_entity ? sizeofarr / sizeofsingle_entity : 0;
 
   if (groupmarker == true){
     extractFromVoid = (uintptr_t)data;
     locatorSkip = 0;
 
-    do {
+    while (overalsize != 0) {
+      newMemory = malloc(sizeof(integ));
+      if (newMemory == NULL){
+	abort();
+      }
       /* since array has contigious memory, let's assume cache miss is minimal */
-      newMemory->data = (void *)(uintptr_t)(extractFromVoid | (sizeofsingle_entity << locatorSkip));
-      newMemory->type = false;
+      if (pointer == true)
+	newMemory->data = (void *)*(uintptr_t **)(uintptr_t)(extractFromVoid + (locatorSkip ? sizeofsingle_entity * locatorSkip : 0));
+      else
+	newMemory->data = (void *)(uintptr_t)(extractFromVoid + (locatorSkip ? sizeofsingle_entity * locatorSkip : 0));
       newMemory->link = NULL;
 
        point2lastlink = &objself->last;
@@ -109,8 +58,15 @@ void destroy(Object_List *objself){
       locatorSkip += 1;
       overalsize -= 1;
 
-    } while (!overalsize);
+    }
     goto end;
+  }
+  newMemory = malloc(sizeof(integ));
+  if (newMemory == NULL){
+    /* corrupted memory/failed allocation */
+    // if (DEBUG_MODE)
+    //logerror(SIGALLOC);
+    abort();
   }
   newMemory->data = data;
   newMemory->type = false;
@@ -121,12 +77,11 @@ void destroy(Object_List *objself){
   *point2lastlink = newMemory;
   objself->items += 1;
 
- end: /* Nothing here. End of function */
+ end: (void)0; /* Nothing here. End of function */
 }
 
-#define ____NUMARGS(...) sizeof (unsigned int[]){__VA_ARGS__} / ((sizeof (int)) - 1)
 
-#define DBLTYPE(_type)(((uintmax_t)cos(M_PI * (double)(_type))))
+#define ____NUMARGS(...) sizeof (unsigned int[]){__VA_ARGS__} / ((sizeof (int)) - 1)
 
 #define remove_data(...)
 

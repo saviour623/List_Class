@@ -18,12 +18,12 @@ struct Object {
   struct integ *last;
   size_t items;
   void (*add)(struct integ **, void *);
-  void (*addData)(Object *, size_t, size_t, _Bool, void *);
+  void (*addData)(Object *, bool, size_t, size_t, bool, void *);
 };
 
 void init(struct Object *myObject, void * data);
 void add(integ **self, void *data);
-void addData(Object *, size_t, size_t, _Bool, void *);
+static void addData(Object *, bool, size_t, size_t, bool, void *);
 
 
 void init(struct Object *myObject, void *data){
@@ -39,17 +39,22 @@ void init(struct Object *myObject, void *data){
 int main(void){
   Object newlist;
   int testvar = 67;
-  int n = 12;
-  int arr[] = {1, 2, 4};
+  int n = 49;
+  char *s = "start";
+  //char *arr[] = {"hell0", "this", "is", "what i", "was", "talking", "about", "yesterday", "evening"};
+  char arr[] = {'a', 'b', 'c'};
+   integ *ptr;
   init(&newlist, &n);
 
-  newlist.addData(newlist.self, sizeof arr, sizeof arr[0], 1, arr);
+  newlist.addData(newlist.self, 0, sizeof arr, sizeof arr[0], 1, arr);
+  // newlist.addData(newlist.self, sizeof arr, sizeof arr[0], 1, arr);
 
-  integ *ptr = newlist.list;
-  while (ptr != NULL){
-    printf("%d\n", *(int *)ptr->data);
-    ptr = ptr->link;
-  }
+  ptr = newlist.list;
+   while (ptr != NULL){
+     printf("%c\n", *(char *)ptr->data);
+     ptr = ptr->link;
+   }
+  printf("%c\n", *(char *) newlist.last->data);;
   return 0;
 }
 
@@ -60,32 +65,26 @@ void add(integ **self, void *data){
   (*self)->link = new_memory;
   *self = new_memory;
 }
-void addData(Object *objself, size_t sizeofarr, size_t sizeofsingle_entity, _Bool groupmarker, void *data){
-  integ *newMemory = malloc(sizeof(integ));
-  integ **point2lastlink;
-  if (newMemory == NULL){
-    /* corrupted memory/failed allocation */
-    // if (DEBUG_MODE)
-      //logerror(SIGALLOC);
-    abort();
-  }
+static void addData(Object *objself, bool pointer, size_t sizeofarr, size_t sizeofsingle_entity, bool groupmarker, void *data){
+  integ *newMemory, **point2lastlink;
   uintptr_t extractFromVoid __attribute__((unused));
   uintptr_t locatorSkip __attribute__((unused));
   size_t overalsize = sizeofsingle_entity ? sizeofarr / sizeofsingle_entity : 0;
-
 
   if (groupmarker == true){
     extractFromVoid = (uintptr_t)data;
     locatorSkip = 0;
 
-    int p = 4;
     while (overalsize != 0) {
       newMemory = malloc(sizeof(integ));
+      if (newMemory == NULL){
+	abort();
+      }
       /* since array has contigious memory, let's assume cache miss is minimal */
-      newMemory->data = (void *)(uintptr_t)(extractFromVoid + (locatorSkip ? sizeofsingle_entity * locatorSkip : 0));
-      // newMemory->data = (void *)extractFromVoid;
-      //newMemory->data = &p;
-      newMemory->type = false;
+      if (pointer == true)
+	newMemory->data = (void *)*(uintptr_t **)(uintptr_t)(extractFromVoid + (locatorSkip ? sizeofsingle_entity * locatorSkip : 0));
+      else
+	newMemory->data = (void *)(uintptr_t)(extractFromVoid + (locatorSkip ? sizeofsingle_entity * locatorSkip : 0));
       newMemory->link = NULL;
 
        point2lastlink = &objself->last;
@@ -99,6 +98,13 @@ void addData(Object *objself, size_t sizeofarr, size_t sizeofsingle_entity, _Boo
     }
     goto end;
   }
+  newMemory = malloc(sizeof(integ));
+  if (newMemory == NULL){
+    /* corrupted memory/failed allocation */
+    // if (DEBUG_MODE)
+    //logerror(SIGALLOC);
+    abort();
+  }
   newMemory->data = data;
   newMemory->type = false;
   newMemory->link = NULL;
@@ -108,5 +114,5 @@ void addData(Object *objself, size_t sizeofarr, size_t sizeofsingle_entity, _Boo
   *point2lastlink = newMemory;
   objself->items += 1;
 
- end: /* Nothing here. End of function */
+ end: (void)0; /* Nothing here. End of function */
 }
