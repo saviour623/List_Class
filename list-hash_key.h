@@ -1,4 +1,5 @@
-﻿#ifndef GENERIC_LIST
+﻿
+#ifndef GENERIC_LIST
 #define GENERIC_LIST
 
 #include <math.h>
@@ -7,19 +8,24 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <stdint.h>
 #include <stdbool.h>
+#include "array_constructor.h"
+
 typedef enum {
   INT_DATA,
   FLT_DATA
 } TYPE;
 // determine if type is integer or float (1 if true else 0)
+static void logerror(unsigned int signal); /* log error message if debug mode is set */
+
 #define UNUSED(VAR)(void)VAR
 #define list(OBJNAME, ...)\
-  list_t OBJNAME;\
-  __VA_OPT__(list_initiatize(OBJNAME, sizeof (typeof ((void)0, __VA_ARGS__)[]){__VA_ARGS__} / sizeof typeof ((void)0, __VA_ARGS__), __VA_ARGS__))
-#define list_initialize(_object, sizeofdata, _data)	\
-  _object.name = "<list::object>"#_object;\
-  init(&_object, _data)
+  static list_t OBJNAME;\
+  init(&_object, "<list::object>"#_object, _data);\
+  __VA_OPT__(IF_ELSE(PARENTHESIS(__VA_ARGS__)), ARRAY(OBJECTNAME.add, __initobjmem, OBJECTNAME, __VA_ARGS__)\
+	     (ARRAY(OBJECTNAME.add, __initobjmem, OBJECTNAME, (__VA_ARGS__))))
+
 #define uninitialize(_object)(destroy(&_object))
 
 #define type_check(_type)(int)pow(((int)cosl(M_PI * (float)*(double*)(_type))), 2)
@@ -36,25 +42,25 @@ struct Object_List {
   struct genlist *list;
   struct genlist *last; //for now it points at list but "last" will always point to end of node
   struct Object_List *objself;
-  char *name;
-  uintmax_t items;
+  const char * const name;
+  static uintmax_t items;
 
-  void (*add2list)(struct Object_List *, void *); //will also assign type
+  void (*add)(struct Object_List *, void *); //will also assign type
   void (*remove)(struct Object_List *,  ...);
 };
 typedef Object_List list;
 #include "generic.h"
-
-void init(Object_List *object, void *data){
+void init(Object_List *object, static const char * nameoflistobj, void *data){
+  _object.name = nameoflistobj;
   object->list = malloc(sizeof(list));
-  object->list->data = data;
-  object->list->type = type_check(data);
+  object->list->data = NULL;
+  object->list->type = 0;
   object->list->link = NULL;
   object->items = 1;
   object->last = object->list;
 
   object->objself = object;
-  object->add2list = add2list;
+  object->add = addData;
   object->remove = remfromlist;
 }
 
@@ -72,31 +78,62 @@ void destroy(Object_List *objself){
   objself->objself = NULL;
 }
 
-static void add2list(Object_List *objself, void *data){
-  genlist *newMemory = (genlist *)malloc(sizeof(genlist));
-  newMemory->data = data;
-  newMemory->type = type_check(data) ? 1 : 0;
-  newMemory->link = NULL;
+[[noreturn]] static void addData(Object_List *objself, size_t sizeofarr, size_t sizeofsingle_entity, _Bool groupmarker, void *data){
+  genlist *newMemory = malloc(sizeof(genlist));
+  genlist **point2lastlink;
+  if (newMemory == NULL){
+    /* corrupted memory/failed allocation */
+    if (DEBUG_MODE)
+      logerror(SIGALLOC);
+    abort();
+  }
+  uintptr_t extractFromVoid __attribute__((unused));
+  uintptr locatorSkip __attribute__((unused));
+  size_t overalsize = sizeofarr / sizeofsingle_entity;
 
-  /** modify list(HEAD) without changing the posiion of list(HEAD) pointer, we need a pointer...
-      to list(HEAD) but we also want to update list(HEAD), so a double pointer is needed. @objself->last is our pointer and @tmpself is ...*/
-  genlist **tmpself = &objself->last;
-  (*tmpself)->link = newMemory;
-  *tmpself = newMemory;
+  if (groupmarker == true){
+    extractFromVoid = (uintptr_t)data;
+    locatorSkip = 0;
+
+    do {
+      /* since array has contigious memory, let's assume cache miss is minimal */
+      newMemory->data = (void *)(uintptr_t)(extractFromVoid | (sizeofsingle_entity << locatorSkip));
+      newMemory->type = false;
+      NewMemory->link = NULL;
+
+       point2lastlink = &objself->last;
+       (*point2lastlink)->link = newMemory;
+       *point2lastlink = newMemory;
+       objself->items += 1;
+
+      locatorSkip += 1;
+      overalsize -= 1;
+
+    } while (!oversize);
+    !oversize ? goto end : 0;
+  }
+  newMemory->data = data;
+  newMemory->type = false;
+  NewMemory->link = NULL;
+
+  point2lastlink = &objself->last;
+  (*point2lastlink)->link = newMemory;
+  *point2lastlink = newMemory;
   objself->items += 1;
+
+ end: /* Nothing here. End of function */
 }
-#define add_data(...)
-#include "macro.h"
-#include ALIAS_EXEC(function, object, ...)
-#define add
-#define NUMARGS(...) (sizeof((int[]){__VA_ARGS__})/sizeof(int) - 1)
+
+#define ____NUMARGS(...) sizeof (unsigned int[]){__VA_ARGS__} / ((sizeof (int)) - 1)
+
 #define DBLTYPE(_type)(((uintmax_t)cos(M_PI * (double)(_type))))
+
 #define remove_data(...)
 
 static void alias_remove_data(Object_List *objself, int numfargs, ...){
   if (numfargs == 0)
     return;
-  va_list args:
+  va_list args;
   va_start(args, numfargs);
 
   void *forceConvert __attribute__((unused)), **retaiNvoid;
@@ -131,42 +168,5 @@ static void remfromlist(Object_List *objself, ...){
   objself->items -= 1;
 }
 
-/***
-void print_list(Object_List *self){
-  //TODO: print_list should allow user to add specifiers like %(x, o, precision, etc for integers
-  //also implement print index function;
-  while (list_ptr != NULL){
-#     if list_ptr->type == 1;
-          typedef int32_t type;
-#         define type_spec "d"
-#     elif !(list_ptr->type)
-#        define type_spec "f"
-         typedef double type;
-#     else
-#       define type_spec "p"
-        typedef void * type;
-#     endif
-  }
-  printf(("%") (type_spec), (type *)(self->generic_list->data))
-  } */
-
-#endif /* GENERIC_LIST */
-
-/** ADD FEATURES
- * remfromlist
- * (remove a particular value througout the list */
-/* remove entire if no index is passed
- *
- * add2list
- * add to index
- * add to last if index is not specified
-
- * Assign (macro) cast data to appropriate type
- * join
- * join two list with direction eg list 1 first, list 2 second
-
- * print
- * printf with specification (pass format as string)
- * printf with indexes
- * printf only type (if index is specified print with index)
-*/
+/** modify list(HEAD) without changing the posiion of list(HEAD) pointer, we need a pointer...
+      to list(HEAD) but we also want to update list(HEAD), so a double pointer is needed. @objself->last is our pointer and @tmpself is ...*/

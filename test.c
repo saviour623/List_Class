@@ -8,14 +8,10 @@
 #define P(...) __VA_ARGS__
 #define STR(OBJ, C, ...) T(group, C, list, 1, int, __VA_ARGS__)
 #define lisT(OBJ, ...) STR(OBJ, __COUNTER__, __VA_ARGS__)
-void group(char *obj, int size, int type, void *p){
+void group(char *obj, int size, int type, int group, void *p){
   int *x = p;
   printf("%d\n", *x);
 }
-#define LETS_TAKE(...) CHOOSE_ARG(__VA_ARGS__)
-#define DEFTYPE(TYPEINFO, ARG)\
-  AND(LOGICAL_OR(NOT(CAT(READ_, CHOOSE_ARG(EVAL2 T ## TYPEID))), CHOOSE_ARG(EVAL1 T ## TYPEINFO))(1), CHECK_ARG(EVAL1 ARG)) \
-    (static __typeof__((void)0, CHOOSE_ARG(EVAL_1 ARG)) ____newListobj;)
 
 static void check(char *obj, int type, void *p){
 }
@@ -25,7 +21,6 @@ int main(void){
   //char *s[] = {"hello", "hi"};
   //printf("%zd\n", sizeof s[0]);
 
-  
   //  DEFTYPE(S__(1, 0), (1, 2, 3))
   // LETS_TAKE(EVAL1 (1, 2, 3))
   //({static int i = 0; });

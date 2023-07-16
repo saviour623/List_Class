@@ -111,3 +111,45 @@ list(list.self, "hold", "h", "b", "sigh", "be", "please", "yep");
   list->add(1, 2);
 
   //AUTO_TYPE(group, 2, 1, 1, int, 5, 6, 7, 8, 9, 5, 5, 6, 7, 8, 9, 5, 5, 6, 7, 8, 9, 5);
+
+
+
+/***
+void print_list(Object_List *self){
+  //TODO: print_list should allow user to add specifiers like %(x, o, precision, etc for integers
+  //also implement print index function;
+  while (list_ptr != NULL){
+#     if list_ptr->type == 1;
+          typedef int32_t type;
+#         define type_spec "d"
+#     elif !(list_ptr->type)
+#        define type_spec "f"
+         typedef double type;
+#     else
+#       define type_spec "p"
+        typedef void * type;
+#     endif
+  }
+  printf(("%") (type_spec), (type *)(self->generic_list->data))
+  } */
+
+#endif /* GENERIC_LIST */
+
+/** ADD FEATURES
+ * remfromlist
+ * (remove a particular value througout the list */
+/* remove entire if no index is passed
+ *
+ * add2list
+ * add to index
+ * add to last if index is not specified
+
+ * Assign (macro) cast data to appropriate type
+ * join
+ * join two list with direction eg list 1 first, list 2 second
+
+ * print
+ * printf with specification (pass format as string)
+ * printf with indexes
+ * printf only type (if index is specified print with index)
+*/

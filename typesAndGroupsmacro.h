@@ -80,7 +80,3 @@ typedef void NO_FUNCTION_PASSED_TO_ARRAY;
   IF_ELSE(NOT(CAT(READ_, ARG)), IDENTIFIER_ ## ARG)(0)
 
 #endif/* LEXICAL_MACRO_H */
-
-/* if group type is parenthesized, either handle it or error... maybe handle it
-   /* arguments like ARG(a, b) a, b - (a, b) is assumed to be one argument
-   /* Group id can be wrapped around parentheesis */
