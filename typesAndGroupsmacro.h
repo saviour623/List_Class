@@ -42,12 +42,13 @@ typedef void NO_FUNCTION_PASSED_TO_ARRAY;
 #define WRAP_IN_PAREN_GROUP_AND_TYPE(ARG)\
   IF_ELSE(NOT(CAT(READ_, ARG)), EXPARGS_ ## ARG)(IF_ELSE(TYPE(ARG), CAT(EXPARGS_, ARG))(ARG))
 
+/* TYPE SELECTION */
 #define TYPE__(...) CHOOSE_2_ARG(__VA_ARGS__, 0)
 /* expands to argument's type id if specified */
 #define TYPECHECK(ARG, ...)\
   TYPE__(CAT(IDENTIFIER_, ARG))
 
-/* parenthesized argument denote autotype (guess type). if type is specified or arguments is a group, create its type info. Anything aside these, is undefined so just pass 0. Undefined type may be asserted in any call that uses types */
+/* parenthesized argument denote autotype (assumed type). if type is specified or arguments is a group, create its type info. Anything aside these, is undefined so just pass 0. Undefined type may be asserted in any call that uses types */
 #define TYPE(ARG, ...)			\
   IF_ELSE(AUTO(ARG), AUTO_TYPE)					\
     (IF_ELSE(TYPECHECK(ARG), TYPECHECK(ARG))(GROUP_ARG(ARG)))

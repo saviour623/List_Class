@@ -23,6 +23,16 @@
   (_Generic((OBJ), cp__: 0, default: SIGOBJECT),		\
    __LINE__, __func__, __FILE__, "ARRAY("WARN(#OBJ)", (...))");
 
+/* if 1 expand expression else if 0, log error */
+#define ASSERT_ARG_1(SIG, ARG, ...) CHOOSE_1(__VA_ARGS__)
+#define ASSERT_ARG_0(SIG, ARG, ...)\
+  LOGMSG(SIG, ARG, __VA_ARGS__)
+
+/* ARG_VARGS helps in expansion and error checking. expands to expression, ARG,	\
+   when true, else expands to the post arguments for logging error */
+#define ARG_VARGS_1(ARG, ...) ARG
+#define ARG_VARGS_0(ARG, ...) __VA_ARGS__
+
 /*__attribute__((always_inline)) static inline				\
 const string_t magcol__(const string_t const name, string_t const restrict arg, string_t varargs);
 */

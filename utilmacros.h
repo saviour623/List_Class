@@ -82,7 +82,6 @@
 /* ARGUMENT CHECKING MACROS */
 #define NON_EMPTY_VA_ARGS(...)		\
   BOOL(CHOOSE_1(EMPTY_VA_ARGS_ __VA_ARGS__)())
-#define CHOOSE_1(ARG1, ...) ARG1
 #define EMPTY_VA_ARGS_(...) 0
 
 /*----- __CHECK_ARG__ - CHECKS FOR ARGUMENT, INCLUDING PARENTHESIS */
@@ -102,4 +101,8 @@
 #define  HAS_ARGUMENT_1() ;
 #define HAS_ARGUMENT_0()
 
+/* ARGUMENTS SELECTION MACROS */
+#define CHOOSE_VARGS(ARG, ...) __VA_ARGS__
+#define CHOOSE_ARG(ARG, ...) ARG
+#define CHOOSE_1(ARG1, ...) ARG1
 #endif /* _UTILMACROS_

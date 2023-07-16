@@ -21,7 +21,7 @@ static void check(char *obj, int type, void *p){
 }
 int main(void){
   char *list = "This is my array";
-  ARRAY(group, ____newListobj, list, U(1, 2));
+  ARRAY(group, ____newListobj, list, (1,1, 2));
   //char *s[] = {"hello", "hi"};
   //printf("%zd\n", sizeof s[0]);
 
