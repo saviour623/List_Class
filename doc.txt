@@ -89,3 +89,25 @@ have another implementation that also provides size
 /* Todo: REMOVE ALL INLINE MACRO COMMENTS */
 /*END */
 /* passing -, ., /, {, [, etc would result to error since cpp can tokenize them
+
+
+list(list.self, "hold", "h", "b", "sigh", "be", "please", "yep");
+  autolist(list.self, ("hold", "assert"), (1, 2, 3, 5, 8, 12, 6));
+  autolist(list.self, S("hold", "assert"), U(1, 2, 3, 5, 8, 12, 6));
+  arraylist(list.self, ("parcel", "carriage", "stance"));
+
+  list.add(list.self, "yes");
+  list.item(list.self);
+  list.join(list.self, new.self);
+  list.pop(list.self, index);
+  list.push(list.self, data, index);
+  list.popinfo(list.self, index);
+  list.assigntotype(list.self, type);
+  list.sort(list.self); //only for specific type 
+  destroylist(mylist);
+
+  assign(index);
+  /* would call init with 
+  list->add(1, 2);
+
+  //AUTO_TYPE(group, 2, 1, 1, int, 5, 6, 7, 8, 9, 5, 5, 6, 7, 8, 9, 5, 5, 6, 7, 8, 9, 5);
