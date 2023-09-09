@@ -1,0 +1,9 @@
+#!/bin/bash
+```cpp -dN (only macro names), -C/-CC (keep comments) -fdirectives-only```
+cpp -nostdinc -Wexpansion-to-defined -Wundef -P test.c
+
+```
+(to prevent unused macro warning create a dummy use of the maro like this) #if defined the_macro_causing_the_warning #endif 
+-H list headers```
+
+# -nostdinc (do not search standard directory)

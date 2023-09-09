@@ -1,0 +1,25 @@
+==7699== Memcheck, a memory error detector
+==7699== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==7699== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==7699== Command: ./out
+==7699== Parent PID: 7693
+==7699== 
+==7699== 
+==7699== HEAP SUMMARY:
+==7699==     in use at exit: 152 bytes in 5 blocks
+==7699==   total heap usage: 6 allocs, 1 frees, 4,248 bytes allocated
+==7699== 
+==7699== 152 (56 direct, 96 indirect) bytes in 1 blocks are definitely lost in loss record 5 of 5
+==7699==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==7699==    by 0x109323: init (list-hash_key.h:46)
+==7699==    by 0x109474: main (test.c:11)
+==7699== 
+==7699== LEAK SUMMARY:
+==7699==    definitely lost: 56 bytes in 1 blocks
+==7699==    indirectly lost: 96 bytes in 4 blocks
+==7699==      possibly lost: 0 bytes in 0 blocks
+==7699==    still reachable: 0 bytes in 0 blocks
+==7699==         suppressed: 0 bytes in 0 blocks
+==7699== 
+==7699== For lists of detected and suppressed errors, rerun with: -s
+==7699== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)

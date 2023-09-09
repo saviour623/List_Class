@@ -1,0 +1,64 @@
+#!/bin/bash
+#set -e
+#set -u
+echo ${#@}
+DIR='.'
+FILE=test.c
+echo
+envnum=${#@}
+if [[ $envnum = 1 ]]; then
+    envprogramname=1
+elif [ $envnum -lt 1 ]; then
+     envprogramname=0
+else
+    echo "error: invalid number of arguments (env arg should be one or none)"
+    exit
+fi
+
+function _cmd {
+    echo executing $1
+    ` gcc -g @flags -O1 -o out $1 -lm`
+    `valgrind --leak-check=yes --log-file=valgrind.rpt ./out`
+    echo "-----------------------"
+    cat valgrind.rpt
+    echo "----------------------"
+    echo $(bash out)
+}
+if [ $envprogramname -eq 0 ]; then
+    find $DIR -type f | while read LINE; do
+	if [[ $LINE = $FILE ]]; then
+	    _cmd test.c
+	    exit
+	fi
+    done
+    echo -e 'error: missing argument and "$FILE" file cannot be located'
+    exit
+elif [[ $envprogramname -eq 1 ]]; then
+    if [ -d $1 ]; then
+	echo "searching for $FILE file in directory '$1'"
+	find $1 -type f | while read LINE; do
+	    if [[ $LINE = "$1/$FILE" ]]; then
+	    _cmd test.c
+	    exit
+	    fi
+	# TODO: echo "error: argument is a directory and 'test.c' file cannot be located" if file cannot be found
+	done
+    fi
+    if [ -f $1 -a -s $1 ]; then
+	#if it is a file but is zero byte (empty)
+	echo -e 'error: file is empty'
+	exit
+    else
+	let var=$1
+	if [[ ${var:(-2)} != ".c" ]]; then
+	    echo -e 'error: file is unrecognized'
+	    exit
+	else
+	    _cmd $var
+	fi
+    fi
+fi
+
+}
+##gcc -g -O1 -Wall -pedantic test.c -o test -lm
+rm *~
