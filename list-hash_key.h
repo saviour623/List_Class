@@ -88,7 +88,7 @@ void destroy(Object_List *objself){
     abort();
   }
   uintptr_t extractFromVoid __attribute__((unused));
-  uintptr locatorSkip __attribute__((unused));
+  uintptr_t locatorSkip __attribute__((unused));
   size_t overalsize = sizeofarr / sizeofsingle_entity;
 
   if (groupmarker == true){
@@ -99,7 +99,7 @@ void destroy(Object_List *objself){
       /* since array has contigious memory, let's assume cache miss is minimal */
       newMemory->data = (void *)(uintptr_t)(extractFromVoid | (sizeofsingle_entity << locatorSkip));
       newMemory->type = false;
-      NewMemory->link = NULL;
+      newMemory->link = NULL;
 
        point2lastlink = &objself->last;
        (*point2lastlink)->link = newMemory;
@@ -109,12 +109,12 @@ void destroy(Object_List *objself){
       locatorSkip += 1;
       overalsize -= 1;
 
-    } while (!oversize);
-    !oversize ? goto end : 0;
+    } while (!overalsize);
+    goto end;
   }
   newMemory->data = data;
   newMemory->type = false;
-  NewMemory->link = NULL;
+  newMemory->link = NULL;
 
   point2lastlink = &objself->last;
   (*point2lastlink)->link = newMemory;
