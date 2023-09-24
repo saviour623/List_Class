@@ -66,8 +66,8 @@ typedef enum {
 
 #define clst_init_list(obj, memtype, ...)\
   list_t IF_ELSE(PARENTHESIS(obj), CHOOSE_2_ARG(, __EXPAND obj))(obj);\
-  init(&obj, "<list::object>"#obj, _data);				\
+  //init(&obj, "<list::object>"#obj, _data);				\
   //CAT(list_select_grp_single_, PARENTHESIS(__VA_ARGS__))(obj, memtype,  __VA_ARGS__)
-
+#define ____list_expand_param(memtype, obj, type, ...)
 #define uninitialize(_object)(destroy(&_object))
 #endif /* CLISTPROTO_H */
