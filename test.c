@@ -12,9 +12,9 @@ static void check(char *obj, int type, void *p){
 }
 int main(void){
   //type(int)
-  //list()((mylist, int), "hello", "hope", "happy");
+  list()((mylist, int), "hello", "hope", "happy");
   //make_list(0, (1, ), 0)
-  clst_init_list(obj, memtype, 0)
+  //clst_init_list(obj, memtype, 0)
   //try_dual_choice_expand(1, ccty_, cctype, ccpr)(0)
   return 0;
 }

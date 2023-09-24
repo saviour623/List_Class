@@ -52,8 +52,8 @@ typedef enum {
 #define try_dual_choice_expand(cond, prefix, choice_1, choice_2)	\
   CAT(prefix, IF_ELSE(cond, choice_1)(choice_2))
 
-#define clst_cctype clstype
-#define clst_ccptr clsptr
+#define clst_clstype clstype
+#define clst_clsptr clsptr
 #define clstype(obj, ...) ____list_expand_param(obj, 0, __VA_ARGS__)
 #define clsptr(obj, ...) ____list_expand_param(obj, 1, __VA_ARGS__)
 
@@ -70,10 +70,10 @@ typedef enum {
      (IF_ELSE(TEST_FOR_1(NUMAR___G(__EXPAND obj)), clst_init_list(memtype, __EXPAND obj, 0, __VA_ARGS__)) \
        (clst_init_list(memtype, SECARG_INEXP((, __EXPAND obj)), IF_ELSE(CHECK_ARG(SECARG_INEXP(obj)), SECARG_INEXP(obj))(0), __VA_ARGS__)))))
 
-#define clst_init_list(memtype, obj, type, ...) memtype obj type //SECARG_INEXP(obj)
-//  list_t IF_ELSE(PARENTHESIS(obj), CHOOSE_2_ARG(, __EXPAND obj))(obj); \
-//init(&obj, "<list::object>"#obj, _data);				\
-  //CAT(list_select_grp_single_, PARENTHESIS(__VA_ARGS__))(obj, memtype,  __VA_ARGS__)
+#define clst_init_list(memtype, obj, type, ...)\
+  list_t obj;								\
+  //init(&obj, "<list::object>"#obj, _data);				\
+  CAT(list_select_grp_single_, PARENTHESIS(__VA_ARGS__))(obj, memtype,  __VA_ARGS__)
 
   //IF_ELSE(CHECK_ARG(CHOOSE_2_ARG(__EXPAND obj)), clst_init_list(memtype, obj, CHOOSE_2_ARG(__EXPAND obj), __VA_ARGS__))(clst_init_list(memtype, obj, 0, __VA_ARGS__)))
 #define SECARG_INEXP(INPAREN) ALIAS____(CHOOSE_2_ARG, __EXPAND INPAREN)
