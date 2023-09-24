@@ -66,7 +66,8 @@ typedef enum {
 //we check if it is a parenthesis, check if parenhesis has members, check if parenthesis is two argument, check if there is first argument and if there is second argument, if it is not a parenthesis just paste it as obj
 #define clst_init_list(obj, memtype, ...)\
   UNLESS(CHECK_ARG(obj))(IF_ELSE(NOT(PARENTHESIS(obj)), make_list(memtype, obj, 0, __VA_ARGS__)) \
-				    (UNLESS(CHECK_ARG(__EXPAND obj))(IF_ELSE(TEST_FOR_1(NUMAR___G(__EXPAND obj)), make_list(memtype, __EXPAND obj, 0, __VA_ARGS__))(make_list(memtype, obj, IF_ELSE(CHECK_ARG(SECARG_INEXP(obj)), SECARG_INEXP(obj)))(0), __VA_ARGS__))))
+    (UNLESS(CHECK_ARG(__EXPAND obj))(IF_ELSE(TEST_FOR_1(NUMAR___G(__EXPAND obj)), make_list(memtype, __EXPAND obj, 0, __VA_ARGS__))\
+				     (make_list(memtype, SECARG_INEXP((, __EXPAND obj)), IF_ELSE(CHECK_ARG(SECARG_INEXP(obj)), SECARG_INEXP(obj))(0), __VA_ARGS__)))))
 #define ____list_expand_param(memtype, obj, type, ...)
 
 #define make_list(memtype, obj, type, ...) memtype obj type //SECARG_INEXP(obj)
