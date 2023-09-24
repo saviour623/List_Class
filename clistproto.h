@@ -65,14 +65,15 @@ typedef enum {
 #define list(__PREFIX) try_dual_choice_expand(CHECK_ARG(__PREFIX), clst_, __PREFIX, clstype)
 
 #define ____list_expand_param(obj, memtype, ...)\
-  UNLESS(CHECK_ARG(obj))(IF_ELSE(NOT(PARENTHESIS(obj)), clst_init_list(memtype, obj, 0, __VA_ARGS__)) \
+  UNLESS(CHECK_ARG(obj))(IF_ELSE(NOT(PARENTHESIS(obj)), make_list(memtype, obj, 0, __VA_ARGS__)) \
     (UNLESS(CHECK_ARG(__EXPAND obj))\
-     (IF_ELSE(TEST_FOR_1(NUMAR___G(__EXPAND obj)), clst_init_list(memtype, __EXPAND obj, 0, __VA_ARGS__)) \
-       (clst_init_list(memtype, SECARG_INEXP((, __EXPAND obj)), IF_ELSE(CHECK_ARG(SECARG_INEXP(obj)), SECARG_INEXP(obj))(0), __VA_ARGS__)))))
+     (IF_ELSE(TEST_FOR_1(NUMAR___G(__EXPAND obj)), make_list(memtype, __EXPAND obj, 0, __VA_ARGS__)) \
+      (make_list(memtype, SECARG_INEXP((, __EXPAND obj)), IF_ELSE(CHECK_ARG(SECARG_INEXP(obj)), SECARG_INEXP(obj))(0), __VA_ARGS__)))))
+
+#define make_list(memtype, obj, type, ...) clst_init_list(memtype, obj, type, __VA_ARGS__)
 
 #define clst_init_list(memtype, obj, type, ...)\
-  list_t obj;								\
-  //init(&obj, "<list::object>"#obj, _data);				\
+  list_t obj; init(&obj, "<list::object>"#obj, _data);		\
   CAT(list_select_grp_single_, PARENTHESIS(__VA_ARGS__))(obj, memtype,  __VA_ARGS__)
 
   //IF_ELSE(CHECK_ARG(CHOOSE_2_ARG(__EXPAND obj)), clst_init_list(memtype, obj, CHOOSE_2_ARG(__EXPAND obj), __VA_ARGS__))(clst_init_list(memtype, obj, 0, __VA_ARGS__)))
