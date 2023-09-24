@@ -46,9 +46,6 @@ typedef enum {
 } TYPE;
 
 
-
-#define UNUSED(VAR)(void)VAR
-//if cc is not space open cc else open cc
 #define try_dual_choice_expand(cond, prefix, choice_1, choice_2)	\
   CAT(prefix, IF_ELSE(cond, choice_1)(choice_2))
 
@@ -76,7 +73,7 @@ typedef enum {
   list_t obj; init(&obj, "<list::object>"#obj, _data);		\
   CAT(list_select_grp_single_, PARENTHESIS(__VA_ARGS__))(obj, memtype,  __VA_ARGS__)
 
-  //IF_ELSE(CHECK_ARG(CHOOSE_2_ARG(__EXPAND obj)), clst_init_list(memtype, obj, CHOOSE_2_ARG(__EXPAND obj), __VA_ARGS__))(clst_init_list(memtype, obj, 0, __VA_ARGS__)))
 #define SECARG_INEXP(INPAREN) ALIAS____(CHOOSE_2_ARG, __EXPAND INPAREN)
 #define uninitialize(_object)(destroy(&_object))
+
 #endif /* CLISTPROTO_H */

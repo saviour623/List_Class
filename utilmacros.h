@@ -105,4 +105,6 @@
 #define CHOOSE_VARGS(ARG, ...) __VA_ARGS__
 #define CHOOSE_ARG(ARG, ...) ARG
 #define CHOOSE_1(ARG1, ...) ARG1
+
+#define UNUSED(VAR)(void)VAR
 #endif /* _UTILMACROS_ */
