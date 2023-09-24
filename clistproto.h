@@ -65,13 +65,14 @@ typedef enum {
 #define list(__PREFIX) try_dual_choice_expand(CHECK_ARG(__PREFIX), clst_, __PREFIX, clstype)
 //we check if it is a parenthesis, check if parenhesis has members, check if parenthesis is two argument, check if there is first argument and if there is second argument, if it is not a parenthesis just paste it as obj
 #define clst_init_list(obj, memtype, ...)\
-  list_t IF_ELSE(PARENTHESIS(obj), CHOOSE_2_ARG(, __EXPAND obj))(obj);\
-  //init(&obj, "<list::object>"#obj, _data);				\
-  //CAT(list_select_grp_single_, PARENTHESIS(__VA_ARGS__))(obj, memtype,  __VA_ARGS__)
+  __VA_OPT__(UNLESS(CHECK_ARG(obj))(IF_ELSE(NOT(PARENTHESIS(obj)), make_list(memtype, obj, 0, __VA_ARGS__))\
+				    (UNLESS(CHECK_ARG(__EXPAND obj))(IF_ELSE()()   ))))
 #define ____list_expand_param(memtype, obj, type, ...)
 
-#define oop(obj)\
-  IF_ELSE(PARENTHESIS(obj)
+#define make_list(memtype, obj, type, ...)
+//  list_t IF_ELSE(PARENTHESIS(obj), CHOOSE_2_ARG(, __EXPAND obj))(obj); \
+//init(&obj, "<list::object>"#obj, _data);				\
+  //CAT(list_select_grp_single_, PARENTHESIS(__VA_ARGS__))(obj, memtype,  __VA_ARGS__)
 
 
 #define uninitialize(_object)(destroy(&_object))
