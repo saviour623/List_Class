@@ -45,21 +45,29 @@ typedef enum {
   FLT_DATA
 } TYPE;
 
+
+
 #define UNUSED(VAR)(void)VAR
-// determine if type is integer or float (1 if true else 0)
-#define cctype(obj, ...) ccdll_init_list(obj, 0, __VA_ARGS__)
-#define ccptr(obj, ...) ccdll_init_list(obj, 1, __VA_ARGS__)
+//if cc is not space open cc else open cc
+#define try_dual_choice_expand(cond, prefix, choice_1, choice_2)	\
+  CAT(prefix, IF_ELSE(cond, choice_1)(choice_2))
+
+#define clst_cctype clstype
+#define clst_ccptr clsptr
+#define clstype(obj, ...) clst_init_list(obj, 0, __VA_ARGS__)
+#define clsptr(obj, ...) clst_init_list(obj, 1, __VA_ARGS__)
 
 #define list_select_grp_single_0(obj, memtype, ...)	\
   ARRAY(obj.add, obj, memtype, (__VA_ARGS__))
 #define list_select_grp_single_1(obj, memtype, ...)	\
   ARRAY(obj.add, obj, memtype, __VA_ARGS__)
 
-#define list(__PREFIX) IF_ELSE(CHECK_ARG(__PREFIX), __PREFIX)(cctype)
+#define list(__PREFIX) try_dual_choice_expand(CHECK_ARG(__PREFIX), clst_, __PREFIX, cctype)
 
-#define ccdll_init_list(obj, memtype, ...)\
-  list_t obj; init(&obj, "<list::object>"#obj, _data);\
-  CAT(list_select_grp_single_, PARENTHESIS(__VA_ARGS__))(obj, memtype,  __VA_ARGS__)
+#define clst_init_list(obj, memtype, ...)\
+  list_t IF_ELSE(PARENTHESIS(obj), CHOOSE_2_ARG(, __EXPAND obj))(obj);\
+  init(&obj, "<list::object>"#obj, _data);				\
+  //CAT(list_select_grp_single_, PARENTHESIS(__VA_ARGS__))(obj, memtype,  __VA_ARGS__)
 
 #define uninitialize(_object)(destroy(&_object))
 #endif /* CLISTPROTO_H */

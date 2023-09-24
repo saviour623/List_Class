@@ -12,9 +12,8 @@ static void check(char *obj, int type, void *p){
 }
 int main(void){
   //type(int)
-  // list(cctype)(mylist, "hello", "hope", "happy");
-  ARRAY(add, obj, mem, ("hell"))
-  // list(mylist, ccltype, "hello");
-  //
+  list()((mylist, int), "hello", "hope", "happy");
+
+  //try_dual_choice_expand(1, ccty_, cctype, ccpr)(0)
   return 0;
 }
