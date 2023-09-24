@@ -63,7 +63,7 @@ typedef enum {
   ARRAY(obj.add, obj, memtype, __VA_ARGS__)
 
 #define list(__PREFIX) try_dual_choice_expand(CHECK_ARG(__PREFIX), clst_, __PREFIX, cctype)
-
+//we check if it is a parenthesis, check if parenhesis has members, check if parenthesis is two argument, check if there is first argument and if there is second argument
 #define clst_init_list(obj, memtype, ...)\
   list_t IF_ELSE(PARENTHESIS(obj), CHOOSE_2_ARG(, __EXPAND obj))(obj);\
   //init(&obj, "<list::object>"#obj, _data);				\
