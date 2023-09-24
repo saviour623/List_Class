@@ -153,3 +153,5 @@ void print_list(Object_List *self){
  * printf with indexes
  * printf only type (if index is specified print with index)
 */
+
+//#define ____list_expand_param(obj, memtype, ...): we check if it is a parenthesis, check if parenhesis has members, check if parenthesis is two argument, check if there is first argument and if there is second argument, if it is not a parenthesis just paste it as obj
