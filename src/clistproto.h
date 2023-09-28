@@ -9,8 +9,12 @@
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include "array_constructor.h"
-
+#include "list_constructor.h"
+/**
+#if UINTPTR_T
+#define uintptr uintmax_t
+#endif
+*/
 static void addData(Object *objself, bool pointer, size_t sizeofarr, size_t sizeofsingle_entity, bool groupmarker, void *data);
 void init(Object_List *object, static const char * nameoflistobj, void *data);
 void destroy(Object_List *objself);

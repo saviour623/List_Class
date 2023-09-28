@@ -1,7 +1,7 @@
 #include "utilmacros.h"
 #include "typesAndGroupsmacro.h"
 #include "numargs.h"
-#include "errormessage.h"
+#include "../debug/errormessage.h"
 
 #if __GNUC__
 /*#pragma GCC diagnostic ignored "-Wunused-macros"*/

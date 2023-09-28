@@ -1,1 +1,0 @@
--std=c99 -pedantic -ansi -Wunused-macros -fcond-mismatch -Wextra  -Wall  -Wparentheses  -Wunused-but-set-parameter -Wmissing-declarations -Wstrict-prototypes -Waddress -Warith-conversion -Wcomment -Wdouble-promotion -Wdangling-else -Wconversion -Wbad-function-cast -Wdeclaration-after-statement
