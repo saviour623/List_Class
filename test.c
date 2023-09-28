@@ -11,10 +11,9 @@
 static void check(char *obj, int type, void *p){
 }
 int main(void){
-  //type(int)
-  list()((mylist, int), "hello", "hope", "happy");
-  //make_list(0, (1, ), 0)
-  //clst_init_list(obj, memtype, 0)
-  //try_dual_choice_expand(1, ccty_, cctype, ccpr)(0)
+  //cT for a C type, cP for pointer, cG for group C type and gP,
+  list(cT)((mylist), 'a');
+
   return 0;
 }
+//TODO: set a flag for group and a flag for single, so that when ever group is used, single cannot be used

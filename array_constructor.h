@@ -64,9 +64,9 @@ static char name__[5] = "ARRAY";
 
 #define CONSTRUCT_ARRAY(FUNC, OBJ, MEMTYPE, ID, STYPE, ...)		\
   IF_ELSE(NOT(CAT(READ_, ID)(0)), EXPAND_GROUP_PARAM_TO_GROUP(FUNC, OBJ, MEMTYPE, STYPE, __VA_ARGS__)) \
-    (IF_ELSE(TEST_FOR_1(ID),  FUNC(OBJ, MEMTYPE, sizeof ((void)0, CHOOSE_1(__VA_ARGS__)), NUMAR___G(__VA_ARGS__), ID, 0, (__typeof__((void)0, CHOOSE_1(__VA_ARGS__))[]){__VA_ARGS__})) \
+    (IF_ELSE(TEST_FOR_1(ID),  FUNC(OBJ, MEMTYPE, sizeof int, NUMAR___G(__VA_ARGS__), ID, 0, (int[]){__VA_ARGS__})) \
      (FUNC(OBJ, MEMTYPE, (0), ID, 0, (0))))
-
+//FUNC(OBJ, MEMTYPE, sizeof ((void)0, CHOOSE_1(__VA_ARGS__)), NUMAR___G(__VA_ARGS__), ID, 0, (__typeof__((void)0, CHOOSE_1(__VA_ARGS__))[]){__VA_ARGS__})
 /* we must expand the type information before constructing group. first argument of type info is usually the type id and the second is the actual type */
 #define EXPAND_GROUP_PARAM_TO_GROUP(FUNC, OBJ, MEMTYPE, TYPE_INFO, ...) \
   GROUP_CONSTRUCTOR(FUNC, OBJ, MEMTYPE, CHOOSE_1 TYPE_INFO, CHOOSE_2_ARG TYPE_INFO, __VA_ARGS__)
