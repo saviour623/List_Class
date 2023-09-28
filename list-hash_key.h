@@ -38,6 +38,7 @@ static void addData(Object *objself, bool pointer, size_t sizeofarr, size_t size
     extractFromVoid = (uintptr_t)data;
     locatorSkip = 0;
 
+    oversize -= 1;
     while (overalsize != 0) {
       newMemory = malloc(sizeof(integ));
       if (newMemory == NULL){

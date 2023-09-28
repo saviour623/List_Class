@@ -51,6 +51,8 @@ typedef enum {
 
 #define clst_cT clstype
 #define clst_cP clsptr
+#define clist_cG clstype
+#define clist_gP clsptr
 #define clstype(obj, ...) ____list_expand_param(obj, 0, __VA_ARGS__)
 #define clsptr(obj, ...) ____list_expand_param(obj, 1, __VA_ARGS__)
 
