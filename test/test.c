@@ -1,5 +1,5 @@
-#include "list-hash_key.h"
-#include "array_constructor.h"
+#include "../src/list-hash_key.h"
+#include "../src/list_constructor.h"
 #include <time.h>
 #include <stdio.h>
 #include <stdint.h>
