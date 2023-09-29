@@ -53,19 +53,20 @@ typedef enum {
 #define try_dual_choice_expand(cond, prefix, choice_1, choice_2)	\
   CAT(prefix, IF_ELSE(cond, choice_1)(choice_2))
 
-#define clst_cT clstype
-#define clst_cP clsptr
-#define clist_cG clstype
-#define clist_gP clsptr
-#define clstype(obj, ...) ____list_expand_param(obj, 0, __VA_ARGS__)
-#define clsptr(obj, ...) ____list_expand_param(obj, 1, __VA_ARGS__)
+#define clst_macrorep_cT ______clstype
+#define clst_macrorep_cP ______clsptr
+#define clist_macrorep_cG ______clstype
+#define clist_macrorep_gP ______clsptr
+#define ______clstype(obj, ...) ____list_expand_param(obj, 0, __VA_ARGS__)
+#define ______clsptr(obj, ...) ____list_expand_param(obj, 1, __VA_ARGS__)
+#define ______group
 
 #define list_select_grp_single_0(obj, memtype, ...)	\
   ARRAY(obj.add, obj, memtype, (__VA_ARGS__))
 #define list_select_grp_single_1(obj, memtype, ...)	\
   ARRAY(obj.add, obj, memtype, __VA_ARGS__)
 
-#define list(__PREFIX) try_dual_choice_expand(CHECK_ARG(__PREFIX), clst_, __PREFIX, clstype)
+#define list(__PREFIX) try_dual_choice_expand(CHECK_ARG(__PREFIX), clst_macrorep_, __PREFIX, clstype)
 
 #define ____list_expand_param(obj, memtype, ...)\
   __VA_OPT__(UNLESS(CHECK_ARG(obj))(IF_ELSE(NOT(PARENTHESIS(obj)), make_list(memtype, obj, 0, __VA_ARGS__)) \
