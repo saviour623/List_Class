@@ -56,29 +56,29 @@ typedef enum {
 #define clst_macrorep_cT ______clstype
 #define clst_macrorep_cP ______clsptr
 #define clist_macrorep_cG ______clstype
-#define clist_macrorep_gP ______clsptr
-#define ______clstype(obj, ...) ____list_expand_param(obj, 0, __VA_ARGS__)
-#define ______clsptr(obj, ...) ____list_expand_param(obj, 1, __VA_ARGS__)
-#define ______group
+#define clist_macrorep_gP ______group_clsptr
+#define ______clstype(obj, ...) ____list_expand_param(obj, 0, 0, __VA_ARGS__)
+#define ______clsptr(obj, ...) ____list_expand_param(obj, 1, 0, __VA_ARGS__)
+#define ______group_clsptr(obj, ...)
 
-#define list_select_grp_single_0(obj, memtype, ...)	\
-  ARRAY(obj.add, obj, memtype, (__VA_ARGS__))
-#define list_select_grp_single_1(obj, memtype, ...)	\
-  ARRAY(obj.add, obj, memtype, __VA_ARGS__)
+#define list_select_grp_single_0(obj, memtype, grpmaker, ...)	\
+  ARRAY(obj.add, obj, memtype, grpmaker, (__VA_ARGS__))
+#define list_select_grp_single_1(obj, memtype, grpmaker, ...)	\
+  ARRAY(obj.add, obj, memtype, grpmaker, __VA_ARGS__)
 
 #define list(__PREFIX) try_dual_choice_expand(CHECK_ARG(__PREFIX), clst_macrorep_, __PREFIX, clstype)
 
-#define ____list_expand_param(obj, memtype, ...)\
-  __VA_OPT__(UNLESS(CHECK_ARG(obj))(IF_ELSE(NOT(PARENTHESIS(obj)), make_list(memtype, obj, 0, __VA_ARGS__)) \
+#define ____list_expand_param(obj, memtype, grpmaker, ...)		\
+  __VA_OPT__(UNLESS(CHECK_ARG(obj))(IF_ELSE(NOT(PARENTHESIS(obj)), make_list(memtype, obj, 0, grpmaker, __VA_ARGS__)) \
     (UNLESS(CHECK_ARG(__EXPAND obj))\
-     (IF_ELSE(TEST_FOR_1(NUMAR___G(__EXPAND obj)), make_list(memtype, __EXPAND obj, 0, __VA_ARGS__)) \
-      (make_list(memtype, SECARG_INEXP((, __EXPAND obj)), IF_ELSE(CHECK_ARG(SECARG_INEXP(obj)), SECARG_INEXP(obj))(0), __VA_ARGS__))))))
+     (IF_ELSE(TEST_FOR_1(NUMAR___G(__EXPAND obj)), make_list(memtype, __EXPAND obj, 0, grpmaker, __VA_ARGS__)) \
+      (make_list(memtype, SECARG_INEXP((, __EXPAND obj)), IF_ELSE(CHECK_ARG(SECARG_INEXP(obj)), SECARG_INEXP(obj))(0), grpmaker, __VA_ARGS__))))))
 
-#define make_list(memtype, obj, type, ...) clst_init_list(memtype, obj, type, __VA_ARGS__)
+#define make_list(memtype, obj, type, grpmaker, ...) clst_init_list(memtype, obj, type, grpmaker, __VA_ARGS__)
 
-#define clst_init_list(memtype, obj, type, ...)\
+#define clst_init_list(memtype, obj, type, grpmaker, ...)	\
   list_t obj; init(&obj, "<list::object>"#obj, _data); \
-  CAT(list_select_grp_single_, PARENTHESIS(__VA_ARGS__))(obj, memtype,  __VA_ARGS__)
+  CAT(list_select_grp_single_, PARENTHESIS(__VA_ARGS__))(obj, memtype, grpmaker, __VA_ARGS__)
 
 #define SECARG_INEXP(INPAREN) ALIAS____(CHOOSE_2_ARG, __EXPAND INPAREN)
 #define uninitialize(_object)(destroy(&_object))
