@@ -110,7 +110,7 @@ static void addData(Object *objself, bool pointer, size_t sizeofarr, size_t size
       }
       else {
 	//newMemory->data = (void *)(uintptr_t)(extractFromVoid + (locatorSkip ? sizeofsingle_entity * locatorSkip : 0));
-	printf("%zu ", extractFromVoid + (uintptr_t)(locatorSkip ? sizeofsingle_entity * locatorSkip : 0));
+	printf("%zu ", (uintptr_t)((char *)data + (uintptr_t)(locatorSkip ? sizeofsingle_entity * locatorSkip : 0)));
       }
       newMemory->link = NULL;
 
