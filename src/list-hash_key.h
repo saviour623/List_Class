@@ -30,12 +30,12 @@ void destroy(Object_List *objself){
 
 static void addData(Object *objself, bool pointer, size_t sizeofarr, size_t sizeofsingle_entity, bool groupmarker, void *data){
   integ *newMemory, **point2lastlink;
-  uintptr_t extractFromVoid __attribute__((unused));
+  char *extractFromVoid __attribute__((unused));
   uintptr_t locatorSkip __attribute__((unused));
   size_t overalsize = sizeofsingle_entity ? sizeofarr / sizeofsingle_entity : 0;
 
   if (groupmarker == true){
-    extractFromVoid = (uintptr_t)data;
+    extractFromVoid = (char *)data;
     locatorSkip = 0;
 
     oversize -= 1;
@@ -46,9 +46,9 @@ static void addData(Object *objself, bool pointer, size_t sizeofarr, size_t size
       }
       /* since array has contigious memory, let's assume cache miss is minimal */
       if (pointer == true)
-	newMemory->data = (void *)*(uintptr_t **)(uintptr_t)(extractFromVoid + (locatorSkip ? sizeofsingle_entity * locatorSkip : 0));
+	newMemory->data = (void *)*(char **)(extractFromVoid + (locatorSkip ? sizeofsingle_entity * locatorSkip : 0));
       else
-	newMemory->data = (void *)(uintptr_t)(extractFromVoid + (locatorSkip ? sizeofsingle_entity * locatorSkip : 0));
+	newMemory->data = (void *)(char *)(extractFromVoid + (locatorSkip ? sizeofsingle_entity * locatorSkip : 0));
       newMemory->link = NULL;
 
        point2lastlink = &objself->last;

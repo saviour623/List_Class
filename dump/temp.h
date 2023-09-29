@@ -232,3 +232,25 @@ typedef void NO_FUNCTION_PASSED_TO_ARRAY;
   GROUP_CONSTRUCTOR(FUNC, NAME, OBJ, CHOOSE_1 TYPE_INFO, CHOOSE_2_ARG TYPE_INFO, __VA_ARGS__)
 #define GROUP_CONSTRUCTOR(FUNC, NAME, OBJ, ID, STYPE, ...) IF_ELSE(TEST_FOR_1(ID), FUNC(OBJ, sizeof NAME / sizeof NAME[0], ID, 1, NAME)) \
     (FUNC(OBJ, sizeof NAME / sizeof NAME[0], ID, 1, NAME))
+
+
+
+
+
+#
+/* creates a static array containing ARG with type usually based on the type info */
+#define DECLARE_CONTENT_ARRAY(NAME, ARG, ...) UNLESS(CHECK_ARG(__EXPAND1 ARG)) \
+    (IF_ELSE(LOGICAL_OR(NOT(CAT(READ_, CHOOSE_ARG(__VA_ARGS__))(0)), TEST_FOR_1(CHOOSE_ARG(__VA_ARGS__)))(1), static __typeof__(0, CHOOSE_2_ARG(, __EXPAND1 ARG)) NAME[] = {__EXPAND1 ARG};) \
+     (static CHOOSE_VARGS(__VA_ARGS__) NAME[] = {__EXPAND1 ARG};))
+
+/* extract the important information from the type info. Usually, group info is (G, (ID, TYPE)) we only need ID and TYPE, also if its not a group.*/
+#define _____FILTER_ID(...)\
+  IF_ELSE(NOT(CAT(READ_, CHOOSE_1(__VA_ARGS__))(0)), ALIAS____(CHOOSE_ARG, __EXPAND_1(__EXPAND1 CHOOSE_2_ARG(__VA_ARGS__))),\
+	  ALIAS____(CHOOSE_VARGS, __EXPAND_1(__EXPAND1 CHOOSE_2_ARG(__VA_ARGS__))))(__VA_ARGS__)
+
+/** __MAIN CONSTRUCTION__: ARRAY & ARRAY_ARGS
+ * @ARRAY - Asserts the provided arguments given and call a recursive constructor with the copy of a function, an object, type (assumed from the first
+ * argument), the first argument, and the rest, if no error is encountered.
+ * @ARRAY_ARGS - creates array only if type identifier is valid (non zero), arguments is non empty, and array members is bounded in parenthesis
+ *  and non empty, if successful, it recursively calls itself with the next argument till all variadic arguments is exhausted.
+ */
