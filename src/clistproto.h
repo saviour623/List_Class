@@ -41,6 +41,28 @@ struct Object_List {
   void (*config_addData)(Object_List *, bool, size_t, size_t, bool, void *);
   void (*remove)(struct Object_List *,  ...);
 };
+
+struct ObjectSelf {
+  struct genlist *list;
+  struct genlist *last; //for now it points at list but "last" will always point to end of node
+  struct ObjectSelf *objself;
+  const char * const name;
+
+  void (*add)(struct Object_List *, void *); //will also assign type
+  void (*config_addData)(Object_List *, bool, size_t, size_t, bool, void *);
+  void (*remove)(struct Object_List *,  ...);
+};
+
+#define create_struct(self, type_st_object)		\
+  struct self ## objself_ ## defclass  {							\
+    type_st_object type_llist_object;					\
+    size_t st_offsetof_memoObj;						\
+    const char * const selfName;						\
+    uintmax_t items;							\
+    ObjectSelf *self;							\
+  } self, *self_track=&self;
+
+//#define init(self)
 typedef Object_List list;
 
 static void logerror(unsigned int signal); /* log error message if debug mode is set */
@@ -48,7 +70,7 @@ typedef enum {
   INT_DATA,
   FLT_DATA
 } TYPE;
-
+//TODO: IF GROUP MAKER IN ARRAY, SIGNAL FUNC TO ISOLATE MEMBERS
 
 #define try_dual_choice_expand(cond, prefix, choice_1, choice_2)	\
   CAT(prefix, IF_ELSE(cond, choice_1)(choice_2))
@@ -59,14 +81,14 @@ typedef enum {
 #define clist_macrorep_gP ______group_clsptr
 #define ______clstype(obj, ...) ____list_expand_param(obj, 0, 0, __VA_ARGS__)
 #define ______clsptr(obj, ...) ____list_expand_param(obj, 1, 0, __VA_ARGS__)
-#define ______group_clsptr(obj, ...)
+#define ______group_clsptr(obj, ...) ____list_expand_param(obj, 0, 1, __VA_ARGS__)
 
 #define list_select_grp_single_0(obj, memtype, grpmaker, ...)	\
   ARRAY(obj.add, obj, memtype, grpmaker, (__VA_ARGS__))
 #define list_select_grp_single_1(obj, memtype, grpmaker, ...)	\
   ARRAY(obj.add, obj, memtype, grpmaker, __VA_ARGS__)
 
-#define list(__PREFIX) try_dual_choice_expand(CHECK_ARG(__PREFIX), clst_macrorep_, __PREFIX, clstype)
+#define list(__PREFIX) try_dual_choice_expand(CHECK_ARG(__PREFIX), clst_macrorep_, __PREFIX, cT)
 
 #define ____list_expand_param(obj, memtype, grpmaker, ...)		\
   __VA_OPT__(UNLESS(CHECK_ARG(obj))(IF_ELSE(NOT(PARENTHESIS(obj)), make_list(memtype, obj, 0, grpmaker, __VA_ARGS__)) \
