@@ -53,6 +53,7 @@ struct ObjectSelf {
   void (*remove)(struct Object_List *,  ...);
 };
 
+struct obj
 #define create_struct(self, type_st_object)		\
   static struct self ## obj_ ## defclass  {							\
     type_st_object type_llist_object;					\
