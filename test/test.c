@@ -15,8 +15,10 @@ int main(void){
 
 
 
-  create_struct(mylist, char);
-  list()((mylist, char), ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'i', 'j'));
+  //create_struct(mylist, char);
+  list()((mylist, int), ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'i', 'j'));
+
+  // mylist.self->add(mylist.self, data);
   return 0;
 }
 //TODO: set a flag for group and a flag for single, so that when ever group is used, single cannot be used
