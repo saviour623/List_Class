@@ -1,8 +1,10 @@
 #include <stdio.h>
 
 int main (){
-  int i;
+  int i = 1;
 
-  typedef typeof(i) op;
-  //  pop();
+  while (i < 10001){
+    printf("%d, ", i);
+    i++;
+  }
 }
