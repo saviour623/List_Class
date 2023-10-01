@@ -101,15 +101,16 @@ static void logerror(unsigned int signal); /* log error message if debug mode is
 
 #define clst_macrorep_cT ______clstype
 #define clst_macrorep_cP ______clsptr
-#define clist_macrorep_cG ______clstype
-#define clist_macrorep_gP ______group_clsptr
+#define clist_macrorep_cR ______clstype
+#define clist_macrorep_pR ______array_clsptr
+
 #define ______clstype(obj_type, ...)\
   __VA_OPT__(catch_paren_or_empty_arg(obj_type, 0, 0, __EXPAND256(FIND_PARENTHESIS(0, __VA_ARGS__)), __VA_ARGS__))
 
 #define ______clsptr(obj_type, ...)\
   __VA_OPT__(catch_paren_or_empty_arg(obj_type, 1, 0, __EXPAND256(FIND_PARENTHESIS(0, __VA_ARGS__)), __VA_ARGS__))
 
-#define ______group_clsptr(obj_type, ...) __VA_OPT_(____list_expand_param(obj_type, 0, 1, __VA_ARGS__))
+#define ______array_clsptr(obj_type, ...) __VA_OPT_(____list_expand_param(obj_type, 0, 1, __VA_ARGS__))
 
 #define list_select_grp_single_0(obj, memtype, grpmaker, ...)	\
   ARRAY(obj.add, obj, memtype, grpmaker, (__VA_ARGS__))
@@ -118,11 +119,11 @@ static void logerror(unsigned int signal); /* log error message if debug mode is
 
 #define list(__PREFIX) try_dual_choice_expand(CHECK_ARG(__PREFIX), clst_macrorep_, __PREFIX, cT)
 
-#define ____list_expand_param(obj, memtype, grpmaker, ...)\
-  UNLESS(CHECK_ARG(obj))(IF_ELSE(NOT(PARENTHESIS(obj)), CAT(make_redirect_, NOT(PARENTHESIS(obj)))(memtype, obj, grpmaker, __VA_ARGS__)) \
+#define ____list_expand_param(obj, memtype, arr_marker, ...)\
+  UNLESS(CHECK_ARG(obj))(IF_ELSE(NOT(PARENTHESIS(obj)), CAT(make_redirect_, NOT(PARENTHESIS(obj)))(memtype, obj, arr_marker, __VA_ARGS__)) \
     (UNLESS(CHECK_ARG(__EXPAND1 obj))\
-     (IF_ELSE(TEST_FOR_1(NUMAR___G(__EXPAND1 obj)), make_list(memtype, __EXPAND obj, 0, grpmaker, __VA_ARGS__)) \
-      (make_list(memtype, CHOOSE_ARG(__EXPAND obj), IF_ELSE(CHECK_ARG(SECARG_INEXP(obj)), SECARG_INEXP(obj))(0), grpmaker, __VA_ARGS__)))))
+     (IF_ELSE(TEST_FOR_1(NUMAR___G(__EXPAND1 obj)), make_list(memtype, __EXPAND obj, 0, arr_marker, __VA_ARGS__)) \
+      (make_list(memtype, CHOOSE_ARG(__EXPAND obj), IF_ELSE(CHECK_ARG(SECARG_INEXP(obj)), SECARG_INEXP(obj))(0), arr_marker, __VA_ARGS__)))))
 
 /* make_redirect_1: prevents the case where obj is not parenthesized, regardless of the condition, an expansion to obj ## token will be errornous */
 #define make_redirect_1(memtype, obj, grpmaker, ...)  clst_init_list(memtype, obj, 0, grpmaker, __VA_ARGS__)
