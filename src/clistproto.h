@@ -53,7 +53,11 @@ struct ObjectSelf {
   void (*remove)(struct Object_List *,  ...);
 };
 
-struct obj
+typedef struct objmethod objmethod {
+  void (*add)(struct Object_List *, void *);
+  void (*config_addData)(Object_List *, bool, size_t, size_t, bool, void *);
+  void (*remove)(struct Object_List *,  ...);
+}
 #define create_struct(self, type_st_object)		\
   static struct self ## obj_ ## defclass  {							\
     type_st_object type_llist_object;					\
@@ -61,8 +65,8 @@ struct obj
     const char * const selfName;						\
     uintmax_t items;							\
     ObjectSelf *self;							\
-  } self, *self_track=&self; ObjectSelf self ## method ;
-
+  } self, *self_track=&self; objmethod self ## _method ;
+//REMEMBER - when initializing, i will also initialize self_method
 //#define init(self)
 typedef Object_List list;
 
