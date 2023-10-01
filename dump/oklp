@@ -1,0 +1,51 @@
+#include "list_constructor.h"
+#include <stdio.h>
+#include <stdint.h>
+
+/* USAGE:
+  we need to know if the members are non group so that we can manually wrap in parenthesis before passing to array, or they are group so that we can just pass to the function.
+  additionally we signal error if they are mixed.
+call group and single the same except one is wrapped in parenthesis and the other is not i.e
+call(func, obj, arraymaker=0, group ? __VA_ARGS__ : (__VA_ARGS__))
+replace grpmaker with arraymaker.
+
+if arraymaker ? create using arraystyle : normal expansion (including expansion and merging of group members)
+ */
+
+#define FIND_PAREN_PASS() FIND_PARENTHESIS
+
+/* found parenthesis? move no further */
+#define FOUND_PARENTHESIS_1(STATE, ...) ___MOVE_TO_NEXT(1,)
+#define FOUND_PARENTHESIS_0(STATE, REM1, ...) ___MOVE_TO_NEXT(STATE, __VA_ARGS__)
+
+#define FIND_PARENTHESIS(STATE, ...)\
+  IF_ELSE(CHECK_ARG(__VA_ARGS__), CAT(FOUND_PARENTHESIS_, PARENTHESIS(__VA_ARGS__))(STATE, __VA_ARGS__))\
+    (IF_ELSE(CHECK_ARG(CHOOSE_VARGS(__VA_ARGS__)), 2)(STATE))
+
+#define ___MOVE_TO_NEXT(STATE, ...)\
+  PUSH(FIND_PAREN_PASS)()(STATE, __VA_ARGS__)
+
+#define ____NOT_ERROR_CODE_2(...) 0
+#define CATCH_PAREN_OR_EMPTY_ARG(...) \
+  IF_ELSE(CAT(____NOT_ERROR_CODE_, __VA_ARGS__)(0), /* call array here */__VA_ARGS__)(ASSERT_ARG_0(SIGEMPTY, ARG, __VA_ARGS__))
+
+int main(){
+  CATCH_PAREN_OR_EMPTY_ARG(__EXPAND256(FIND_PARENTHESIS(0, (0))))
+}
+/**
+assert((1), (), ())
+ assert(state, arg, ...)
+    if parenthesis(arg) loop( (eval state, 1)
+    else state
+
+    if arg is empty (if test_1(NUMARG(eval state)), 0, 1)
+if 1st arg is a parenthesis add one 
+ */
+
+//TODO: check if list has a pointer memeber but list(cP) wasnt specified
+//have a pointer to that always adjust to the middle of list, so that iteration can be easier. check if iterate is less or greater than middle - check if iterator is closer to middle or beginning by halving the middle, then iterate either from begining upward or middle downward OR iterate from middle upward or end downward.
+
+//for group - paste the values and form one compound literal. e.g
+//(1, 2, 3), (4, 5, 6) = (type[]){1, 2, 3, 4, 5, 6}
+//for array - paste each values inside {} and form one array compound literal
+// (1, 2, 3), (4, 5, 6) = (type*[]){{1, 2, 3}, {4, 5, 6}}

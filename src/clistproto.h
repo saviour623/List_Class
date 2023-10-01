@@ -74,6 +74,25 @@ typedef Object_List list;
 static void logerror(unsigned int signal); /* log error message if debug mode is set */
 
 //TODO: IF GROUP MAKER IN ARRAY, SIGNAL FUNC TO ISOLATE MEMBERS
+#define FIND_PAREN_PASS() FIND_PARENTHESIS
+
+/* found parenthesis? move no further */
+#define FOUND_PARENTHESIS_1(STATE, ...) ___MOVE_TO_NEXT(1,)
+#define FOUND_PARENTHESIS_0(STATE, REM1, ...) ___MOVE_TO_NEXT(STATE, __VA_ARGS__)
+
+#define FIND_PARENTHESIS(STATE, ...)\
+  IF_ELSE(CHECK_ARG(__VA_ARGS__), CAT(FOUND_PARENTHESIS_, PARENTHESIS(__VA_ARGS__))(STATE, __VA_ARGS__))\
+    (IF_ELSE(CHECK_ARG(CHOOSE_VARGS(__VA_ARGS__)), 2)(STATE))
+
+#define ___MOVE_TO_NEXT(STATE, ...)\
+  PUSH(FIND_PAREN_PASS)()(STATE, __VA_ARGS__)
+
+#define ____NOT_ERROR_CODE_2(...) 0
+
+#define catch_paren_or_empty_arg(obj, memtype, arr_marker, if_paren_or_single, ...) \
+  IF_ELSE(CAT(____NOT_ERROR_CODE_, if_paren_or_single)(0), /* call array here */__VA_ARGS__)(ASSERT_ARG_0(SIGEMPTY, ARG, __VA_ARGS__))
+
+//IF_ELSE(CAT(____NOT_ERROR_CODE_, __VA_ARGS__)(0), /* call array here */__VA_ARGS__)(ASSERT_ARG_0(SIGEMPTY, ARG, __VA_ARGS__))
 
 #define try_dual_choice_expand(cond, prefix, choice_1, choice_2)	\
   CAT(prefix, IF_ELSE(cond, choice_1)(choice_2))
@@ -82,9 +101,9 @@ static void logerror(unsigned int signal); /* log error message if debug mode is
 #define clst_macrorep_cP ______clsptr
 #define clist_macrorep_cG ______clstype
 #define clist_macrorep_gP ______group_clsptr
-#define ______clstype(obj, ...) __VA_OPT__(____list_expand_param(obj, 0, 0, __VA_ARGS__))
-#define ______clsptr(obj, ...) __VA_OPT__(____list_expand_param(obj, 1, 0, __VA_ARGS__))
-#define ______group_clsptr(obj, ...) __VA_OPT_(____list_expand_param(obj, 0, 1, __VA_ARGS__))
+#define ______clstype(obj_type, ...) catch_paren_or_empty_arg(obj_type, 0, 0, __EXPAND256(FIND_PARENTHESIS(0, __VA_ARGS__)), __VA_ARGS__)//__VA_OPT__(____list_expand_param(obj_type, 0, 0, __VA_ARGS__))
+#define ______clsptr(obj_type, ...) __VA_OPT__(____list_expand_param(obj_type, 1, 0, __VA_ARGS__))
+#define ______group_clsptr(obj_type, ...) __VA_OPT_(____list_expand_param(obj_type, 0, 1, __VA_ARGS__))
 
 #define list_select_grp_single_0(obj, memtype, grpmaker, ...)	\
   ARRAY(obj.add, obj, memtype, grpmaker, (__VA_ARGS__))
@@ -93,23 +112,25 @@ static void logerror(unsigned int signal); /* log error message if debug mode is
 
 #define list(__PREFIX) try_dual_choice_expand(CHECK_ARG(__PREFIX), clst_macrorep_, __PREFIX, cT)
 
-/* make_redirect_1: prevents the case where obj is not parenthesized, regardless of the condition, an expansion to obj ## token will be errornous */
-#define make_redirect_1(memtype, obj, grpmaker, ...)  clst_init_list(memtype, obj, 0, grpmaker, __VA_ARGS__)
 #define ____list_expand_param(obj, memtype, grpmaker, ...)\
   UNLESS(CHECK_ARG(obj))(IF_ELSE(NOT(PARENTHESIS(obj)), CAT(make_redirect_, NOT(PARENTHESIS(obj)))(memtype, obj, grpmaker, __VA_ARGS__)) \
     (UNLESS(CHECK_ARG(__EXPAND1 obj))\
      (IF_ELSE(TEST_FOR_1(NUMAR___G(__EXPAND1 obj)), make_list(memtype, __EXPAND obj, 0, grpmaker, __VA_ARGS__)) \
       (make_list(memtype, CHOOSE_ARG(__EXPAND obj), IF_ELSE(CHECK_ARG(SECARG_INEXP(obj)), SECARG_INEXP(obj))(0), grpmaker, __VA_ARGS__)))))
 
+/* make_redirect_1: prevents the case where obj is not parenthesized, regardless of the condition, an expansion to obj ## token will be errornous */
+#define make_redirect_1(memtype, obj, grpmaker, ...)  clst_init_list(memtype, obj, 0, grpmaker, __VA_ARGS__)
 #define make_list(memtype, obj, type, grpmaker, ...) clst_init_list(memtype, obj, type, grpmaker, __VA_ARGS__)
-//typedef char mylist_clslltype;
-#define clst_init_list(memtype, obj, type, grpmaker, ...)\
+
+#define clst_init_list(memtype, obj, type, grpmaker, ...)		\
   typedef IF_ELSE(type, type)(__typeof__(NULL, CHOOSE_ARG(__VA_ARGS__))) mylist_clslltype; \
   list_t mylist; struct objmethod self ## _method;				\
   init(&obj, "<list::object>"#obj, _data);				\
   CAT(list_select_grp_single_, PARENTHESIS(__VA_ARGS__))(obj, memtype, grpmaker, __VA_ARGS__)
 
+//TODO: init (should have range maker)
 #define SECARG_INEXP(INPAREN) ALIAS____(CHOOSE_2_ARG, __EXPAND1 INPAREN)
 #define uninitialize(_object)(destroy(&_object))
 
+//ARRAY(FUNC, OBJ, MEMTYPE, ARR_MARKER, TYPE, ...)	\
 #endif /* CLISTPROTO_H */
