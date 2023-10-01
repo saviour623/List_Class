@@ -21,9 +21,6 @@ int main(void){
 
   list()((mylist, int), range(10, 2));
   /* assuming it works this way */
-#define create_list()\
-  typedef char mylist_clslltype;\
-  struct Object_class mylist; struct objmethod self ## _method;
 
   mylist_method.add(mylist.self, data);
   mylist_method.pop(mylist.self, data);

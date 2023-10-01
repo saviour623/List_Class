@@ -82,9 +82,9 @@ static void logerror(unsigned int signal); /* log error message if debug mode is
 #define clst_macrorep_cP ______clsptr
 #define clist_macrorep_cG ______clstype
 #define clist_macrorep_gP ______group_clsptr
-#define ______clstype(obj, ...) ____list_expand_param(obj, 0, 0, __VA_ARGS__)
-#define ______clsptr(obj, ...) ____list_expand_param(obj, 1, 0, __VA_ARGS__)
-#define ______group_clsptr(obj, ...) ____list_expand_param(obj, 0, 1, __VA_ARGS__)
+#define ______clstype(obj, ...) __VA_OPT__(____list_expand_param(obj, 0, 0, __VA_ARGS__))
+#define ______clsptr(obj, ...) __VA_OPT__(____list_expand_param(obj, 1, 0, __VA_ARGS__))
+#define ______group_clsptr(obj, ...) __VA_OPT_(____list_expand_param(obj, 0, 1, __VA_ARGS__))
 
 #define list_select_grp_single_0(obj, memtype, grpmaker, ...)	\
   ARRAY(obj.add, obj, memtype, grpmaker, (__VA_ARGS__))
@@ -102,9 +102,10 @@ static void logerror(unsigned int signal); /* log error message if debug mode is
       (make_list(memtype, CHOOSE_ARG(__EXPAND obj), IF_ELSE(CHECK_ARG(SECARG_INEXP(obj)), SECARG_INEXP(obj))(0), grpmaker, __VA_ARGS__)))))
 
 #define make_list(memtype, obj, type, grpmaker, ...) clst_init_list(memtype, obj, type, grpmaker, __VA_ARGS__)
-
+//typedef char mylist_clslltype;
 #define clst_init_list(memtype, obj, type, grpmaker, ...)\
-  create_struct(obj, type)					\
+  typedef IF_ELSE(type, type)(__typeof__(NULL, CHOOSE_ARG(__VA_ARGS__))) mylist_clslltype; \
+  list_t mylist; struct objmethod self ## _method;				\
   init(&obj, "<list::object>"#obj, _data);				\
   CAT(list_select_grp_single_, PARENTHESIS(__VA_ARGS__))(obj, memtype, grpmaker, __VA_ARGS__)
 
