@@ -66,7 +66,7 @@ typedef struct objmethod objmethod {
     const char * const selfName;						\
     uintmax_t items;							\
     ObjectSelf *self;							\
-    } self, *self_track=&self; objmethod self ## _method ;*/
+    } self, *self_track=&self; objmethod self ## _method ; */
 //REMEMBER - when initializing, i will also initialize self_method
 //#define init(self)
 typedef Object_List list;
