@@ -124,7 +124,7 @@ static void logerror(unsigned int signal); /* log error message if debug mode is
 #define make_redirect_1(memtype, obj, grpmaker, ...)  clst_init_list(memtype, obj, 0, grpmaker, __VA_ARGS__)
 #define make_list(memtype, obj, type, grpmaker, ...) clst_init_list(memtype, obj, type, grpmaker, __VA_ARGS__)
 
-#define clst_init_list(memtype, obj, type, arr_marker, ...)		\arr_marker
+#define clst_init_list(memtype, obj, type, arr_marker, ...)		\
   typedef ____typeof_unspecified_mem(type, __VA_ARGS__) obj ##_clst_lltype; \
   list_t obj; struct objmethod obj ## _method;				\
   init(&obj, "<list::object>"#obj, _data);\
