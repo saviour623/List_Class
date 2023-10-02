@@ -112,11 +112,6 @@ static void logerror(unsigned int signal); /* log error message if debug mode is
 
 #define ______array_clsptr(obj_type, ...) __VA_OPT_(____list_expand_param(obj_type, 0, 1, __VA_ARGS__))
 
-#define list_select_grp_single_0(obj, memtype, grpmaker, ...)	\
-  ARRAY(obj.add, obj, memtype, grpmaker, (__VA_ARGS__))
-#define list_select_grp_single_1(obj, memtype, grpmaker, ...)	\
-  ARRAY(obj.add, obj, memtype, grpmaker, __VA_ARGS__)
-
 #define list(__PREFIX) try_dual_choice_expand(CHECK_ARG(__PREFIX), clst_macrorep_, __PREFIX, cT)
 
 #define ____list_expand_param(obj, memtype, arr_marker, ...)\
@@ -129,11 +124,17 @@ static void logerror(unsigned int signal); /* log error message if debug mode is
 #define make_redirect_1(memtype, obj, grpmaker, ...)  clst_init_list(memtype, obj, 0, grpmaker, __VA_ARGS__)
 #define make_list(memtype, obj, type, grpmaker, ...) clst_init_list(memtype, obj, type, grpmaker, __VA_ARGS__)
 
-#define clst_init_list(memtype, obj, type, grpmaker, ...)		\
-  typedef IF_ELSE(type, type)(__typeof__(NULL, CHOOSE_ARG(__VA_ARGS__))) mylist_clslltype; \
+#define clst_init_list(memtype, obj, type, arr_maker, ...)		\
+  typedef IF_ELSE(type, type)(__typeof__(NULL, CHOOSE_ARG(__VA_ARGS__))) obj ##_clst_lltype; \
   list_t mylist; struct objmethod self ## _method;				\
-  init(&obj, "<list::object>"#obj, _data);				\
-  CAT(list_select_grp_single_, PARENTHESIS(__VA_ARGS__))(obj, memtype, grpmaker, __VA_ARGS__)
+  init(&obj, "<list::object>"#obj, _data);\
+  ARRAY(obj.add, obj, memtype, 0, __VA_ARGS__)									\
+  // CAT(list_select_grp_single_, PARENTHESIS(__VA_ARGS__))(obj, memtype, grpmaker, __VA_ARGS__)
+
+  #define list_select_grp_single_0(obj, memtype, grpmaker, ...)	\
+  ARRAY(obj.add, obj, memtype, grpmaker, (__VA_ARGS__))
+#define list_select_grp_single_1(obj, memtype, grpmaker, ...)	\
+  ARRAY(obj.add, obj, memtype, grpmaker, __VA_ARGS__)
 
 //TODO: init (should have range maker)
 #define SECARG_INEXP(INPAREN) ALIAS____(CHOOSE_2_ARG, __EXPAND1 INPAREN)
