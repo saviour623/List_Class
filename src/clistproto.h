@@ -89,10 +89,12 @@ static void logerror(unsigned int signal); /* log error message if debug mode is
 
 #define ____NOT_ERROR_CODE_2(...) 0
 
-#define catch_paren_or_empty_arg(obj, memtype, arr_marker, if_paren_or_single, ...) \
-  IF_ELSE(CAT(____NOT_ERROR_CODE_, if_paren_or_single)(0), /* call array here */__VA_ARGS__)(ASSERT_ARG_0(SIGEMPTY, ARG, __VA_ARGS__))
-
+#define catch_paren_or_empty_arg(obj_type, memtype, arr_marker, if_paren_or_single, ...) \
+  IF_ELSE(CAT(____NOT_ERROR_CODE_, if_paren_or_single)(0), ____list_expand_param(obj_type, memtype, arr_marker, CAT(paste_va_args_wrapped_unwrapped_, if_paren_or_single)(__VA_ARGS__))) (ASSERT_ARG_0(SIGEMPTY, ARG, __VA_ARGS__))
+//
 //IF_ELSE(CAT(____NOT_ERROR_CODE_, __VA_ARGS__)(0), /* call array here */__VA_ARGS__)(ASSERT_ARG_0(SIGEMPTY, ARG, __VA_ARGS__))
+#define paste_va_args_wrapped_unwrapped_0(...) (__VA_ARGS__)
+#define paste_va_args_wrapped_unwrapped_1(...) __VA_ARGS__
 
 #define try_dual_choice_expand(cond, prefix, choice_1, choice_2)	\
   CAT(prefix, IF_ELSE(cond, choice_1)(choice_2))
@@ -101,8 +103,12 @@ static void logerror(unsigned int signal); /* log error message if debug mode is
 #define clst_macrorep_cP ______clsptr
 #define clist_macrorep_cG ______clstype
 #define clist_macrorep_gP ______group_clsptr
-#define ______clstype(obj_type, ...) catch_paren_or_empty_arg(obj_type, 0, 0, __EXPAND256(FIND_PARENTHESIS(0, __VA_ARGS__)), __VA_ARGS__)//__VA_OPT__(____list_expand_param(obj_type, 0, 0, __VA_ARGS__))
-#define ______clsptr(obj_type, ...) __VA_OPT__(____list_expand_param(obj_type, 1, 0, __VA_ARGS__))
+#define ______clstype(obj_type, ...)\
+  __VA_OPT__(catch_paren_or_empty_arg(obj_type, 0, 0, __EXPAND256(FIND_PARENTHESIS(0, __VA_ARGS__)), __VA_ARGS__))
+
+#define ______clsptr(obj_type, ...)\
+  __VA_OPT__(catch_paren_or_empty_arg(obj_type, 1, 0, __EXPAND256(FIND_PARENTHESIS(0, __VA_ARGS__)), __VA_ARGS__))
+
 #define ______group_clsptr(obj_type, ...) __VA_OPT_(____list_expand_param(obj_type, 0, 1, __VA_ARGS__))
 
 #define list_select_grp_single_0(obj, memtype, grpmaker, ...)	\

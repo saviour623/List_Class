@@ -15,7 +15,7 @@ int main(void){
   //cT for a C type, cP for pointer, cG for group C type and gP for group pointer,
   //ARRAY(add, mylist, 0, 0, int, (1, 2), (3, 4));
 
-  list()(mylist, "hi")
+  list()(mylist, ("hi"))
   //create_struct(mylist, char);
   // list()((mylist, int), ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'i', 'j'));
   /**
