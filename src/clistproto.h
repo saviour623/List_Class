@@ -118,27 +118,24 @@ static void logerror(unsigned int signal); /* log error message if debug mode is
   UNLESS(CHECK_ARG(obj))(IF_ELSE(NOT(PARENTHESIS(obj)), CAT(make_redirect_, NOT(PARENTHESIS(obj)))(memtype, obj, arr_marker, __VA_ARGS__)) \
     (UNLESS(CHECK_ARG(__EXPAND1 obj))\
      (IF_ELSE(TEST_FOR_1(NUMAR___G(__EXPAND1 obj)), make_list(memtype, __EXPAND obj, 0, arr_marker, __VA_ARGS__)) \
-      (make_list(memtype, CHOOSE_ARG(__EXPAND obj), IF_ELSE(CHECK_ARG(SECARG_INEXP(obj)), SECARG_INEXP(obj))(0), arr_marker, __VA_ARGS__)))))
+      (make_list(memtype, SECARG_INEXP((, __EXPAND obj)), IF_ELSE(CHECK_ARG(SECARG_INEXP(obj)), SECARG_INEXP(obj))(0), arr_marker, __VA_ARGS__)))))
 
 /* make_redirect_1: prevents the case where obj is not parenthesized, regardless of the condition, an expansion to obj ## token will be errornous */
 #define make_redirect_1(memtype, obj, grpmaker, ...)  clst_init_list(memtype, obj, 0, grpmaker, __VA_ARGS__)
 #define make_list(memtype, obj, type, grpmaker, ...) clst_init_list(memtype, obj, type, grpmaker, __VA_ARGS__)
 
 #define clst_init_list(memtype, obj, type, arr_maker, ...)		\
-  typedef IF_ELSE(type, type)(__typeof__(NULL, CHOOSE_ARG(__VA_ARGS__))) obj ##_clst_lltype; \
-  list_t mylist; struct objmethod self ## _method;				\
+  typedef ____typeof_unspecified_mem(type, __VA_ARGS__) obj ##_clst_lltype; \
+  list_t obj; struct objmethod obj ## _method;				\
   init(&obj, "<list::object>"#obj, _data);\
-  ARRAY(obj.add, obj, memtype, 0, __VA_ARGS__)									\
-  // CAT(list_select_grp_single_, PARENTHESIS(__VA_ARGS__))(obj, memtype, grpmaker, __VA_ARGS__)
-
-  #define list_select_grp_single_0(obj, memtype, grpmaker, ...)	\
-  ARRAY(obj.add, obj, memtype, grpmaker, (__VA_ARGS__))
-#define list_select_grp_single_1(obj, memtype, grpmaker, ...)	\
-  ARRAY(obj.add, obj, memtype, grpmaker, __VA_ARGS__)
+  ARRAY(obj.add, obj, memtype, arr_marker, ____typeof_unspecified_mem(type, __VA_ARGS__), __VA_ARGS__)		\
+ 
+#define ____typeof_unspecified_mem(type, ...) \
+  IF_ELSE(type, type)(__typeof__(NULL, ALIAS____(CHOOSE_1, CHOOSE_ARG(__EXPAND_1 __VA_ARGS__))))
+//ALIAS____(CHOOSE_1, CHOOSE_ARG(__EXPAND_1 __VA_ARGS__))
 
 //TODO: init (should have range maker)
 #define SECARG_INEXP(INPAREN) ALIAS____(CHOOSE_2_ARG, __EXPAND1 INPAREN)
 #define uninitialize(_object)(destroy(&_object))
 
-//ARRAY(FUNC, OBJ, MEMTYPE, ARR_MARKER, TYPE, ...)	\
 #endif /* CLISTPROTO_H */
