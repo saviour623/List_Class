@@ -221,3 +221,9 @@ if 1st arg is a parenthesis add one
    cll_obj_name = #object;
    cll_local_address = (uintptr_t)(uintptr_t *)&object;
  */
+
+
+at clst_init_list, array should choose either type or typeof the first argument depending if type was provided. however instead of using an obvious typeof, lets use the already typedef made earlier
+
+also at ARRAY, init, array should append * type to make the compound literal valid by making it a literal of pointer of array to the members. e.g type=int
+then we should have sizeof type (if non array) and sizeof type* (if array).

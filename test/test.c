@@ -17,7 +17,7 @@ int main(void){
   //ARRAY(add, mylist, 0, 0, int, (1, 2), (3, 4));
   //__EXPAND 1, 2 3
 
-  list(cR)((char_list, char), 'z', 'a', 'b', 'c', 'd', 'e', 'f');
+  list()(char_list, 'z', 'a', 'b', 'c', 'd', 'e', 'f');
 
   //list()((flt_list), 3.54, 4.67, 9.76. 678.345, 5.98, 8.87)
 

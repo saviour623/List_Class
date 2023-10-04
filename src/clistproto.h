@@ -26,39 +26,27 @@ typedef struct Object_List Object_List;
 
 struct genlist {
   void *data;
-  int16_t type;
-  struct genlist *link;
+  struct genlist *forward_node;
+  struct genlist * backward_node;
 };
 
-struct Object_List {
+typedef struct Object_List {
   struct genlist *list;
   struct genlist *last; //for now it points at list but "last" will always point to end of node
   struct Object_List *objself;
-  const char * const name;
-  static uintmax_t items;
-
+  char * const loc_obj_name;
+  uintmax_t track_items;
+  uintptr_t cll_local_address;
   void (*add)(struct Object_List *, void *); //will also assign type
   void (*config_addData)(Object_List *, bool, size_t, size_t, bool, void *);
   void (*remove)(struct Object_List *,  ...);
-};
-
-struct ObjectSelf {
-  struct genlist *list;
-  struct genlist *last;
-  struct ObjectSelf *objself;
-  char * const cll_obj_name;
-  uintptr_t cll_local_address;
-  void (*add)(struct Object_List *, void *);
-  void (*config_addData)(Object_List *, bool, size_t, size_t, bool, void *);
-  void (*remove)(struct Object_List *,  ...);
-};
+} cclist_obj_t;
 
 typedef struct objmethod objmethod {
   void (*add)(struct Object_List *, void *);
   void (*config_addData)(Object_List *, bool, size_t, size_t, bool, void *);
   void (*remove)(struct Object_List *,  ...);
 }
-typedef Object_List list;
 
 static void logerror(unsigned int signal); /* log error message if debug mode is set */
 
@@ -79,9 +67,8 @@ static void logerror(unsigned int signal); /* log error message if debug mode is
 #define ____NOT_ERROR_CODE_2(...) 0
 
 #define catch_paren_or_empty_arg(obj_type, memtype, arr_marker, if_paren_or_single, ...) \
-  IF_ELSE(CAT(____NOT_ERROR_CODE_, if_paren_or_single)(0), ____list_expand_param(obj_type, memtype, arr_marker, CAT(paste_va_args_wrapped_unwrapped_, if_paren_or_single)(__VA_ARGS__))) (ASSERT_ARG_0(SIGEMPTY, ARG, __VA_ARGS__))
-//
-//IF_ELSE(CAT(____NOT_ERROR_CODE_, __VA_ARGS__)(0), /* call array here */__VA_ARGS__)(ASSERT_ARG_0(SIGEMPTY, ARG, __VA_ARGS__))
+  IF_ELSE(CAT(____NOT_ERROR_CODE_, if_paren_or_single)(0), ____list_expand_param(obj_type, memtype, arr_marker, CAT(paste_va_args_wrapped_unwrapped_, if_paren_or_single)(__VA_ARGS__))) (ASSERT_ARG_0(SIGEMPTY, CHOOSE_ARG(__VA_ARGS__), __VA_ARGS__))
+
 #define paste_va_args_wrapped_unwrapped_0(...) (__VA_ARGS__)
 #define paste_va_args_wrapped_unwrapped_1(...) __VA_ARGS__
 
@@ -109,13 +96,13 @@ static void logerror(unsigned int signal); /* log error message if debug mode is
      (IF_ELSE(TEST_FOR_1(NUMAR___G(__EXPAND1 obj)), make_list(memtype, __EXPAND obj, 0, arr_marker, __VA_ARGS__)) \
       (make_list(memtype, SECARG_INEXP((, __EXPAND obj)), IF_ELSE(CHECK_ARG(SECARG_INEXP(obj)), SECARG_INEXP(obj))(0), arr_marker, __VA_ARGS__)))))
 
-/* make_redirect_1: prevents the case where obj is not parenthesized, regardless of the condition, an expansion to obj ## token will be errornous */
+/* make_redirect_1: prevents the case where obj is not parenthesized because regardless of the test condition, cpp must expand its macros and an expansion to obj ## token (where obj is parenthesized) will be errornous */
 #define make_redirect_1(memtype, obj, grpmaker, ...)  clst_init_list(memtype, obj, 0, grpmaker, __VA_ARGS__)
 #define make_list(memtype, obj, type, grpmaker, ...) clst_init_list(memtype, obj, type, grpmaker, __VA_ARGS__)
 
 #define clst_init_list(memtype, obj, type, arr_marker, ...)		\
   typedef ____typeof_unspecified_mem(type, __VA_ARGS__) obj ##_clst_lltype; \
-  list_t obj; struct objmethod obj ## _method;				\
+  cclist_obj_t obj; struct objmethod obj ## _method;				\
   ARRAY(init, obj, memtype, arr_marker, IF_ELSE(type, type)(obj ##_clst_lltype), __VA_ARGS__) \
 
 #define ____typeof_unspecified_mem(type, ...) \
@@ -125,4 +112,5 @@ static void logerror(unsigned int signal); /* log error message if debug mode is
 #define SECARG_INEXP(INPAREN) ALIAS____(CHOOSE_2_ARG, __EXPAND1 INPAREN)
 #define uninitialize(_object)(destroy(&_object))
 
+/* TODO: all erorrs are not working as expected - work on it later on */
 #endif /* CLISTPROTO_H */

@@ -1,16 +1,19 @@
 ﻿#include "clistproto.h"
 
-void init(Object_List *object, static const char * nameoflistobj, void *data){
-  _object.name = nameoflistobj;
+void init(Object_List *object, char * const obj_name, int8_t ctype_pointer, int8_t build_arr, size_t numargs_pasd, size_t sizeof_memtype, void *data){
+  _object.loc_obj_name = obj_name;
   object->list = malloc(sizeof(list));
   object->list->data = NULL;
-  object->list->type = 0;
-  object->list->link = NULL;
-  object->items = 1;
+
+  object->cll_local_address = (uintptr_t)(self);
+  object->track_items = 0;
+
+  object->list->forward_node = NULL;
+  object->list->backward_node = NULL; 
   object->last = object->list;
 
   object->objself = object;
-   object->config_addData = addData;
+  object->config_addData = addData;
   object->remove = remfromlist;
 }
 
@@ -80,11 +83,6 @@ static void addData(Object *objself, bool pointer, size_t sizeofarr, size_t size
 
  end: (void)0; /* Nothing here. End of function */
 }
-
-
-#define ____NUMARGS(...) sizeof (unsigned int[]){__VA_ARGS__} / ((sizeof (int)) - 1)
-
-#define remove_data(...)
 
 static void alias_remove_data(Object_List *objself, int numfargs, ...){
   if (numfargs == 0)

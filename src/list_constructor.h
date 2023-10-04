@@ -6,7 +6,7 @@
 #if __GNUC__
 /*#pragma GCC diagnostic ignored "-Wunused-macros"*/
 #endif
-static char name__[5] = "ARRAY";
+static char name__[5] = "list";
 
 #define HIDE_ARRAY() ARRAY_ARGS
 /* recursive */
@@ -48,4 +48,4 @@ static char name__[5] = "ARRAY";
      (ASSERT_ARG_0(SIGEMPTY, ","ARG, __VA_ARGS__)))
 
 #define INIT_MACRO_CONSTRUCT(FUNC, OBJ, MEMTYPE, ARR_MARKER, TYPE,  ...)\
-  FUNC(OBJ.self, "<list::object>"#OBJ, MEMTYPE, ARR_MARKER, sizeof IF_ELSE(ARR_MARKER, (TYPE*))((TYPE)), (void *) IF_ELSE(ARR_MARKER, (TYPE*[]))((TYPE[])){__VA_ARGS__})
+  FUNC(OBJ.self, "<list::object>"#OBJ, MEMTYPE, ARR_MARKER, NUMAR___G(__VA_ARGS__), sizeof IF_ELSE(ARR_MARKER, (TYPE*))((TYPE)), (void *) IF_ELSE(ARR_MARKER, (TYPE*[]))((TYPE[])){__VA_ARGS__})
