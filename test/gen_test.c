@@ -45,6 +45,7 @@ int main(void){
   //char *arr[] = {"hell0", "this", "is", "what i", "was", "talking", "about", "yesterday", "evening"};
   char arr[] = "hello this is a good morning";
 
+  (char * *[]){(char *[]){"hello"}};
   int oo = 0;
 
   while (oo < strlen(arr)){

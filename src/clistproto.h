@@ -90,8 +90,7 @@ static void logerror(unsigned int signal); /* log error message if debug mode is
 
 #define clst_macrorep_cT ______clstype
 #define clst_macrorep_cP ______clsptr
-#define clst_macrorep_cR ______clstype
-#define clst_macrorep_pR ______array_clsptr
+#define clst_macrorep_cR ______array_clsptr
 
 #define ______clstype(obj_type, ...)\
   __VA_OPT__(catch_paren_or_empty_arg(obj_type, 0, 0, __EXPAND256(FIND_PARENTHESIS(0, __VA_ARGS__)), __VA_ARGS__))
@@ -99,7 +98,8 @@ static void logerror(unsigned int signal); /* log error message if debug mode is
 #define ______clsptr(obj_type, ...)\
   __VA_OPT__(catch_paren_or_empty_arg(obj_type, 1, 0, __EXPAND256(FIND_PARENTHESIS(0, __VA_ARGS__)), __VA_ARGS__))
 
-#define ______array_clsptr(obj_type, ...) __VA_OPT__(____list_expand_param(obj_type, 0, 1, __VA_ARGS__))
+#define ______array_clsptr(obj_type, ...)\
+  __VA_OPT__(catch_paren_or_empty_arg(obj_type, 0, 1, __EXPAND256(FIND_PARENTHESIS(0, __VA_ARGS__)), __VA_ARGS__))
 
 #define list(__PREFIX) try_dual_choice_expand(CHECK_ARG(__PREFIX), clst_macrorep_, __PREFIX, cT)
 
@@ -116,8 +116,7 @@ static void logerror(unsigned int signal); /* log error message if debug mode is
 #define clst_init_list(memtype, obj, type, arr_marker, ...)		\
   typedef ____typeof_unspecified_mem(type, __VA_ARGS__) obj ##_clst_lltype; \
   list_t obj; struct objmethod obj ## _method;				\
-  init(&obj, "<list::object>"#obj, _data);\
-  ARRAY(obj.add, obj, memtype, arr_marker, IF_ELSE(type, type)(obj ##_clst_lltype), __VA_ARGS__) \
+  ARRAY(init, obj, memtype, arr_marker, IF_ELSE(type, type)(obj ##_clst_lltype), __VA_ARGS__) \
 
 #define ____typeof_unspecified_mem(type, ...) \
   IF_ELSE(type, type)(__typeof__(NULL, ALIAS____(CHOOSE_1, CHOOSE_ARG(__EXPAND_1 __VA_ARGS__))))

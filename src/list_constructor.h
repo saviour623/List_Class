@@ -48,27 +48,4 @@ static char name__[5] = "ARRAY";
      (ASSERT_ARG_0(SIGEMPTY, ","ARG, __VA_ARGS__)))
 
 #define INIT_MACRO_CONSTRUCT(FUNC, OBJ, MEMTYPE, ARR_MARKER, TYPE,  ...)\
-  FUNC(OBJ.self, "<list::object>"#OBJ, MEMTYPE, ARR_MARKER, (void *)((TYPE[]){__VA_ARGS__}))
-
-//(cast is type if non array type else is type *)
-
-  /* error for () shoud be - arg is either started started with an empty arg or it is empty */
-/* use state to make a better error (when not in array style) since it stores the previous arguments to ARRAY */
-/* most cases A_1, A_0 is better to prevent double expansion. e.g
-   in if(cond, loop1)(loop2): cpp would expand both loop anyways but still use loop1 if condition is true. however, this may cause loop2 to not loop again (if looping method is the same with loop1) when condition is false. so loop ## cond, when condition is true or false would only expand to the specific loop for that condition. */
-
-/* in array bracket shouldn't expand to group type */
-
-
-/* struct should have a variable that stores its address!
- * init should do the address assigning;
- * destroy should set the variable to 0;
- *
-
-   struct {
-   const char * const cll_obj_name;
-   const uintptr_t cll_local_address;
-   }
-   cll_obj_name = #object;
-   cll_local_address = (uintptr_t)(uintptr_t *)&object;
- */
+  FUNC(OBJ.self, "<list::object>"#OBJ, MEMTYPE, ARR_MARKER, sizeof IF_ELSE(ARR_MARKER, (TYPE*))((TYPE)), (void *) IF_ELSE(ARR_MARKER, (TYPE*[]))((TYPE[])){__VA_ARGS__})
