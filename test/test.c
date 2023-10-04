@@ -13,10 +13,14 @@ static void check(char * self){
   //list(repl)(char, self);
 }
 int main(void){
-  //cT for a C type, cP for pointer, cG for group C type and gP for group pointer,
+  //cT for a C type, cP for pointer, cG for group C type and gP for group pointer,//how about C for c type, P for pointer, A for array 
   //ARRAY(add, mylist, 0, 0, int, (1, 2), (3, 4));
   //__EXPAND 1, 2 3
-  list()(mylist, (65), ('a', 'b'), ('c', 'd'), ('e', 'f'));
+
+  list(cR)((char_list, char), 65, 'a', 'b', 'c', 'd', 'e', 'f');
+
+  //list()((flt_list), 3.54, 4.67, 9.76. 678.345, 5.98, 8.87)
+
   //list()((mylist, int), 5, (65, 91), ('a', 'b'), ('c', 'd'), ('e', 'f'));
 
   //pop_front(mylist); -> ((mylist_clslltype)(mylist.pop(mylist.self)))

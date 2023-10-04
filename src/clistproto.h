@@ -46,8 +46,8 @@ struct ObjectSelf {
   struct genlist *list;
   struct genlist *last;
   struct ObjectSelf *objself;
-  const char * const name;
-
+  char * const cll_obj_name;
+  uintptr_t cll_local_address;
   void (*add)(struct Object_List *, void *);
   void (*config_addData)(Object_List *, bool, size_t, size_t, bool, void *);
   void (*remove)(struct Object_List *,  ...);
@@ -90,8 +90,8 @@ static void logerror(unsigned int signal); /* log error message if debug mode is
 
 #define clst_macrorep_cT ______clstype
 #define clst_macrorep_cP ______clsptr
-#define clist_macrorep_cR ______clstype
-#define clist_macrorep_pR ______array_clsptr
+#define clst_macrorep_cR ______clstype
+#define clst_macrorep_pR ______array_clsptr
 
 #define ______clstype(obj_type, ...)\
   __VA_OPT__(catch_paren_or_empty_arg(obj_type, 0, 0, __EXPAND256(FIND_PARENTHESIS(0, __VA_ARGS__)), __VA_ARGS__))
@@ -117,11 +117,10 @@ static void logerror(unsigned int signal); /* log error message if debug mode is
   typedef ____typeof_unspecified_mem(type, __VA_ARGS__) obj ##_clst_lltype; \
   list_t obj; struct objmethod obj ## _method;				\
   init(&obj, "<list::object>"#obj, _data);\
-  ARRAY(obj.add, obj, memtype, arr_marker, ____typeof_unspecified_mem(type, __VA_ARGS__), __VA_ARGS__)		\
+  ARRAY(obj.add, obj, memtype, arr_marker, IF_ELSE(type, type)(obj ##_clst_lltype), __VA_ARGS__) \
 
 #define ____typeof_unspecified_mem(type, ...) \
   IF_ELSE(type, type)(__typeof__(NULL, ALIAS____(CHOOSE_1, CHOOSE_ARG(__EXPAND_1 __VA_ARGS__))))
-//ALIAS____(CHOOSE_1, CHOOSE_ARG(__EXPAND_1 __VA_ARGS__))
 
 //TODO: init (should have range maker)
 #define SECARG_INEXP(INPAREN) ALIAS____(CHOOSE_2_ARG, __EXPAND1 INPAREN)
