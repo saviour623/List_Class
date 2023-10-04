@@ -99,7 +99,7 @@ static void logerror(unsigned int signal); /* log error message if debug mode is
 #define ______clsptr(obj_type, ...)\
   __VA_OPT__(catch_paren_or_empty_arg(obj_type, 1, 0, __EXPAND256(FIND_PARENTHESIS(0, __VA_ARGS__)), __VA_ARGS__))
 
-#define ______array_clsptr(obj_type, ...) __VA_OPT_(____list_expand_param(obj_type, 0, 1, __VA_ARGS__))
+#define ______array_clsptr(obj_type, ...) __VA_OPT__(____list_expand_param(obj_type, 0, 1, __VA_ARGS__))
 
 #define list(__PREFIX) try_dual_choice_expand(CHECK_ARG(__PREFIX), clst_macrorep_, __PREFIX, cT)
 
