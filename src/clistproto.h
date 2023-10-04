@@ -58,17 +58,6 @@ typedef struct objmethod objmethod {
   void (*config_addData)(Object_List *, bool, size_t, size_t, bool, void *);
   void (*remove)(struct Object_List *,  ...);
 }
-/**
-#define create_struct(self, type_st_object)		\
-  static struct self ## obj_ ## defclass  {							\
-    type_st_object type_llist_object;					\
-    size_t st_offsetof_memoObj;						\
-    const char * const selfName;						\
-    uintmax_t items;							\
-    ObjectSelf *self;							\
-    } self, *self_track=&self; objmethod self ## _method ; */
-//REMEMBER - when initializing, i will also initialize self_method
-//#define init(self)
 typedef Object_List list;
 
 static void logerror(unsigned int signal); /* log error message if debug mode is set */
@@ -129,7 +118,7 @@ static void logerror(unsigned int signal); /* log error message if debug mode is
   list_t obj; struct objmethod obj ## _method;				\
   init(&obj, "<list::object>"#obj, _data);\
   ARRAY(obj.add, obj, memtype, arr_marker, ____typeof_unspecified_mem(type, __VA_ARGS__), __VA_ARGS__)		\
- 
+
 #define ____typeof_unspecified_mem(type, ...) \
   IF_ELSE(type, type)(__typeof__(NULL, ALIAS____(CHOOSE_1, CHOOSE_ARG(__EXPAND_1 __VA_ARGS__))))
 //ALIAS____(CHOOSE_1, CHOOSE_ARG(__EXPAND_1 __VA_ARGS__))
