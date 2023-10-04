@@ -3,19 +3,23 @@
 #include <time.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 #define start(x) x = clock()
 #define stop(x) x = clock() - x
 #define print(x) printf("%f\n", x/(double)CLOCKS_PER_SEC)
 
 
-static void check(ObjectSelf * self){
-  list(repl)(char, self);
+static void check(char * self){
+  //list(repl)(char, self);
 }
 int main(void){
   //cT for a C type, cP for pointer, cG for group C type and gP for group pointer,
   //ARRAY(add, mylist, 0, 0, int, (1, 2), (3, 4));
+  //__EXPAND 1, 2 3
+  list()(mylist, (65), ('a', 'b'), ('c', 'd'), ('e', 'f'));
+  //list()((mylist, int), 5, (65, 91), ('a', 'b'), ('c', 'd'), ('e', 'f'));
 
-  list()(mylist, ('a', 'b'), ('c', 'd'), ('e', 'f'))
+  //pop_front(mylist); -> ((mylist_clslltype)(mylist.pop(mylist.self)))
   //create_struct(mylist, char);
   // list()((mylist, int), ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'i', 'j'));
   /**
