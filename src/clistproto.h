@@ -103,11 +103,16 @@ static void logerror(unsigned int signal); /* log error message if debug mode is
 
 #define clst_init_list(memtype, obj, type, arr_marker, ...)		\
   typedef ____typeof_unspecified_mem(type, __VA_ARGS__) obj ##_clst_lltype; \
-  cclist_obj_t obj; struct objmethod obj ## _method;				\
-  ARRAY(init, obj, memtype, arr_marker, IF_ELSE(type, type)(obj ##_clst_lltype), __VA_ARGS__) \
+  cclist_obj_t obj; struct objmethod obj ## _method;\
+  CAT(if_and_only_if_range_, RANGE_CHECK(ALIAS____(CHOOSE_1, __VA_ARGS__)))\
+    (init, obj, memtype, arr_marker, IF_ELSE(type, type)(obj ##_clst_lltype), __VA_ARGS__) \
+
+#define if_and_only_if_range_1(...) range
+#define if_and_only_if_range_0(...) ARRAY(__VA_ARGS__)
 
 #define ____typeof_unspecified_mem(type, ...) \
-  IF_ELSE(type, type)(__typeof__(NULL, ALIAS____(CHOOSE_1, CHOOSE_ARG(__EXPAND_1 __VA_ARGS__))))
+  IF_ELSE(type, type)(IF_ELSE(RANGE_CHECK(CHOOSE_ARG(__VA_ARGS__)), long)\
+		      (__typeof__(NULL, ALIAS____(CHOOSE_1, CHOOSE_ARG(__EXPAND_1 __VA_ARGS__)))))(void)
 
 //TODO: init (should have range maker)
 #define SECARG_INEXP(INPAREN) ALIAS____(CHOOSE_2_ARG, __EXPAND1 INPAREN)

@@ -17,8 +17,9 @@ int main(void){
   //ARRAY(add, mylist, 0, 0, int, (1, 2), (3, 4));
   //__EXPAND 1, 2 3
 
-  //list()(char_list, 'z', 'a', 'b', 'c', 'd', 'e', 'f');
-  RANGE_CHECK(RANGE())
+  list()(char_list, 'z', 'a', 'b', 'c', 'd', 'e', 'f');
+  list()(char_list, cc_range());
+  //RANGE_CHECK(cc_range())
   //list()((flt_list), 3.54, 4.67, 9.76. 678.345, 5.98, 8.87)
 
   //list()((mylist, int), 5, (65, 91), ('a', 'b'), ('c', 'd'), ('e', 'f'));
