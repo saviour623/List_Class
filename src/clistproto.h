@@ -112,7 +112,7 @@ static void logerror(unsigned int signal); /* log error message if debug mode is
 
 #define ____typeof_unspecified_mem(type, ...) \
   IF_ELSE(type, type)(IF_ELSE(RANGE_CHECK(CHOOSE_ARG(__VA_ARGS__)), long)\
-		      (__typeof__(NULL, ALIAS____(CHOOSE_1, CHOOSE_ARG(__EXPAND_1 __VA_ARGS__)))))(void)
+		      (__typeof__(NULL, ALIAS____(CHOOSE_1, CHOOSE_ARG(__EXPAND_1 __VA_ARGS__)))))
 
 //TODO: init (should have range maker)
 #define SECARG_INEXP(INPAREN) ALIAS____(CHOOSE_2_ARG, __EXPAND1 INPAREN)
