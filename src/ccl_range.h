@@ -1,11 +1,12 @@
-//#include "../src/list-hash_key.h"
-#include "../src/list_constructor.h"
+#ifndef CCL__RANGE__H
+#define CCL__RANGE__H
+
+#define cc_range(...) \
+  (((((((((((((((((((((((__RANGE_012343210_LL)))))))))))))))))))))), (__VA_ARGS__))
 
 #define __RANGE_012343210_LL(...) _RANGE_01201_LL
 #define _RANGE_01201_LL(...)
 #define HIDE_RANGE() RANGE_STATE
-#define RANGE(...) \
-  (((((((((((((((((((((((__RANGE_012343210_LL)))))))))))))))))))))), (__VA_ARGS__))
 
 #define RANGE_CHECK(ARG) IF_ELSE(PARENTHESIS(ARG), IF_ELSE(PARENTHESIS(ALIAS____(CHOOSE_ARG, __EXPAND_1 ARG)), __EXPAND64(RANGE_STATE((0), ALIAS____(CHOOSE_ARG, __EXPAND_1 ARG))))(0))(0)
 
@@ -23,22 +24,4 @@
 #define NUMPAREN_IS_23(VAR_23) NOT(CAT(PAREN_AT_, VAR_23))
 #define PAREN_AT_23 0
 
-#define NUMARGS_256(_256) NOT(CAT(ARGS_8910_, _256))
-#define ARGS_8910_256 0
-
-#define NEW_CHECK_ARG(ARG, ...)					\
-  IF_ELSE(NOT(FIND_PAREN_PAREN(ARG)), UNLESS_FALSE(PARENTHESIS(ARG))(NON_EMPTY_VA_ARGS(ARG)))(0)
-
-int main(void){
-  RANGE_CHECK(RANGE);
-  return 0;
-}
-
-/* add a self pointer like this:
-mylist ## _self
-
-mylist.add(mylist_self, help);
-
-implement splice and slice
-
-*/
+#endif

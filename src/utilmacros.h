@@ -113,4 +113,8 @@
 #define CHOOSE_1(ARG1, ...) ARG1
 
 #define UNUSED(VAR)(void)VAR
+
+/* FIND NUMBERS */
+#define NUMARGS_256(_256) NOT(CAT(ARGS_8910_, _256))
+#define ARGS_8910_256 0
 #endif /* _UTILMACROS_ */

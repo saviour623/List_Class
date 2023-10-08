@@ -10,6 +10,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "list_constructor.h"
+#include "ccl_range.h"
 /**
 #if UINTPTR_T
 #define uintptr uintmax_t
