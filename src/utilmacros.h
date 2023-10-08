@@ -68,17 +68,20 @@
     UNLESS(NOT(CONDITION))
 
 /* __PARENTHESIS__: CHECKS IF AN ARGUMENT IS A PARENTHESIS */
-#define PARENTHESIS(PAREN, ...)				\
-  CONCAT_IF_TRUE(PAREN, BOOL(CATCH_EXPAND PAREN), 1)
-#define CATCH_EXPAND(...) 0 /* zero, if parenthesis */
+#define PAREN_PAREN_LL(...) PAREN_ABNORMAL_PAREN
+/* abnormal parenthesis should continually make zeros if found */
+#define PAREN_ABNORMAL_PAREN() 0, PAREN_ABNORMAL_PAREN
+/* parenthesis-parenthesis ()() ... is not parenthesis */
+#define FIND_PAREN_PAREN(ARG, ...)					\
+  IF_ELSE(NOT(ALIAS____(CHOOSE_ARG, PAREN_PAREN_LL ARG)), 1)(0)
+
+#define PARENTHESIS(ARG, ...)						\
+  IF_ELSE(NOT(FIND_PAREN_PAREN(ARG)), IF_ELSE(CATCH_EXPAND ARG, 0)(1))(0)
+#define CATCH_EXPAND(...) 0 /* catch_expand arg expands to zero if arg is parenthesis
 
 /* CONCATING MACROS */
-#define CONCAT_IF_TRUE(PAREN, ARG, ARG1)\
-  CAT(CAT(F_, ARG), CAT(F_, ARG1))(PAREN)
-#define F_1F_1(...) 0  /* false. not a parenthesis */
-#define F_0F_1(...) 1
-
 #define CAT(A, B) CONCAT_EXPAND(A, B) /* alias for CONCAT_EXPAND */
+
 /* ARGUMENT CHECKING MACROS */
 #define NON_EMPTY_VA_ARGS(...)		\
   BOOL(CHOOSE_1(EMPTY_VA_ARGS_ __VA_ARGS__)())
@@ -86,6 +89,9 @@
 
 /*----- __CHECK_ARG__ - CHECKS FOR ARGUMENT, INCLUDING PARENTHESIS */
 #define CHECK_ARG(ARG, ...)					\
+  IF_ELSE(NOT(FIND_PAREN_PAREN(ARG)), UNLESS_FALSE(PARENTHESIS(ARG))(NON_EMPTY_VA_ARGS(ARG)))(0)
+
+//#define CHECK_ARG(ARG, ...)					\
   UNLESS_FALSE(PARENTHESIS(ARG))(NON_EMPTY_VA_ARGS(ARG))
 
 /* __ALIAS__ - RUNS ANY MACRO PRIVATELY */
