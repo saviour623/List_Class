@@ -24,4 +24,37 @@
 #define NUMPAREN_IS_23(VAR_23) NOT(CAT(PAREN_AT_, VAR_23))
 #define PAREN_AT_23 0
 
+#define EXTRACT_RANGE_PARAM(...)\
+  IF_ELSE(CHECK_ARG(__VA_ARGS__), RANGE_SET_BIT(CAT(PRESENT_PARAMETER_JUST_, NUMAR___G(__VA_ARGS__))(__VA_ARGS__)))(error1)
+
+/* present_parameter_just_## 1..3 will set set_bit to 0, meaning cc_range() arguments is in bound, else 1 which is out of bound */
+#define RANGE_SET_BIT(...)\
+  REDIRECT_RANGE_SET_BIT(__VA_ARGS__)
+#define REDIRECT_RANGE_SET_BIT(SET_BIT, ...)\
+  IF_ELSE(NOT(SET_BIT), __VA_ARGS__)(error2) 
+
+#define PRESENT_PARAMETER_JUST_1(...)				\
+  0, (__EXPAND8(NOT_PAREN_NOT_EMPTY((0), 0, __VA_ARGS__)))
+#define PRESENT_PARAMETER_JUST_2(...)	\
+  0, (__EXPAND8(NOT_PAREN_NOT_EMPTY((0), __VA_ARGS__)))
+#define PRESENT_PARAMETER_JUST_3(...)		\
+  0, (__EXPAND8(NOT_PAREN_NOT_EMPTY((0), __VA_ARGS__)))
+
+#define NO_EMPTY_NO_PAREN(ARG, ...)		\
+  IF_ELSE(AND(CHECK_ARG(ARG), NOT(PARENTHESIS(ARG))), 1)(0)
+
+#define NUMARGS_4(_4) NOT(CAT(ARGS_0123210_, _4))
+#define ARGS_0123210_4 0
+
+#define NO_PAREN_TRUE_ARG_1(STATE, ARG, ...)\
+  PUSH(HIDE_NOT_PAREN_NOT_EMPTY)()((__EXPAND_1 STATE, ARG), __VA_ARGS__)
+#define NO_PAREN_TRUE_ARG_0(STATE, ARG, ...)\
+  PUSH(HIDE_NOT_PAREN_NOT_EMPTY)()((__EXPAND_1 STATE, 0), __VA_ARGS__)
+
+#define HIDE_NOT_PAREN_NOT_EMPTY() NOT_PAREN_NOT_EMPTY
+
+/* collects arg if arg isn't empty and not a parenthesis else it replaces the above cases with zeros */
+#define NOT_PAREN_NOT_EMPTY(STATE, ARG, ...)		\
+  IF_ELSE(NOT(NUMARGS_4(NUMAR___G(__EXPAND_1 STATE))), CAT(NO_PAREN_TRUE_ARG_, AND(CHECK_ARG(ARG), NOT(PARENTHESIS(ARG)))(1))(STATE, ARG, __VA_ARGS__))(ALIAS____(CHOOSE_VARGS, __EXPAND_1 STATE))
+
 #endif
