@@ -116,8 +116,8 @@ static void logerror(unsigned int signal); /* log error message if debug mode is
     (init, obj, memtype, arr_marker, IF_ELSE(type, type)(obj ##_clst_lltype), __VA_ARGS__) \
 
 #define if_and_only_if_range_1(func, obj, memtype, arr_marker, type, rge_arg, ...)\
-  range_redirect_init_cc(EXTRACT_RANGE_PARAM(__EXPAND_1 ALIAS____(CHOOSE_2_ARG, __EXPAND_1 rge_arg)), func, obj, memtype, arr_marker, type)
-#define range_redirect_init_cc(range_param, ...)\ range_param
+  range_redirect_init_cc(EXTRACT_RANGE_PARAM(__EXPAND_1 ALIAS____(CHOOSE_2_ARG, __EXPAND_1 rge_arg)), func, obj, memtype, arr_marker, long)
+#define range_redirect_init_cc(range_param, ...)\
   IF_ELSE(PARENTHESIS(range_param), init_macro_construct_cc(__VA_ARGS__, 1, __EXPAND_1 range_param))(ASERT_ARG_)
 #define if_and_only_if_range_0(...) ARRAY(__VA_ARGS__)
 

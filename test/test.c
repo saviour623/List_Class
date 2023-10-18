@@ -18,7 +18,7 @@ int main(void){
   //__EXPAND 1, 2 3
 
   //list()(char_list, 'z', 'a', 'b', 'c', 'd', 'e', 'f');
-  list()(int_list, cc_range(10, 6, -2));
+  list()(int_list, cc_range(-45, 54, 43));
   //EXTRACT_RANGE_PARAM(0,4)
   //RANGE_CHECK(cc_range())
   //list()((flt_list), 3.54, 4.67, 9.76. 678.345, 5.98, 8.87)
