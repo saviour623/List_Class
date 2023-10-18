@@ -1,6 +1,6 @@
 ﻿#include "clistproto.h"
 
-void init(Object_List *object, char * const obj_name, int8_t ctype_pointer, int8_t build_arr, size_t numargs_pasd, size_t sizeof_memtype, void *data){
+void init(Object_List *object, char * const obj_name, struct cc_marker, void *data){
   _object.loc_obj_name = obj_name;
   object->list = malloc(sizeof(list));
   object->list->data = NULL;

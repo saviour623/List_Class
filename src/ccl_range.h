@@ -25,13 +25,13 @@
 #define PAREN_AT_23 0
 
 #define EXTRACT_RANGE_PARAM(...)\
-  IF_ELSE(CHECK_ARG(__VA_ARGS__), RANGE_SET_BIT(CAT(PRESENT_PARAMETER_JUST_, NUMAR___G(__VA_ARGS__))(__VA_ARGS__)))(error1)
+  IF_ELSE(CHECK_ARG(__VA_ARGS__), RANGE_SET_BIT(CAT(PRESENT_PARAMETER_JUST_, NUMAR___G(__VA_ARGS__))(__VA_ARGS__)))(7)
 
 /* present_parameter_just_## 1..3 will set set_bit to 0, meaning cc_range() arguments is in bound, else 1 which is out of bound */
 #define RANGE_SET_BIT(...)\
   REDIRECT_RANGE_SET_BIT(__VA_ARGS__)
 #define REDIRECT_RANGE_SET_BIT(SET_BIT, ...)\
-  IF_ELSE(NOT(SET_BIT), __VA_ARGS__)(error2) 
+  IF_ELSE(NOT(SET_BIT), __VA_ARGS__)(8)
 
 #define PRESENT_PARAMETER_JUST_1(...)				\
   0, (__EXPAND8(NOT_PAREN_NOT_EMPTY((0), 0, __VA_ARGS__)))

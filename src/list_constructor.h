@@ -44,8 +44,8 @@ static char name__[5] = "list";
      (ASSERT_ARG_0(SIGBOUND, ARG, __VA_ARGS__))				\
      CAT(___PUSH_NEXT_CLL_, AND(ARG_ISPAREN, PAREN_NONULL)(1))(ALIAS____(RECALL_ARRAY_LL, __EXPAND_1 PARAM_IN_PAREN, APD, STATE, ARG, __VA_ARGS__)))\
     ELSE_STOPRCURSE_NEXPD_CLL(NOT(ARG_ISPRESNT))			\
-    (IF_ELSE(NOT(CHECK_ARG(__VA_ARGS__)), ALIAS____(INIT_MACRO_CONSTRUCT, __EXPAND_1 PARAM_IN_PAREN, __EXPAND_1 STATE))\
+    (IF_ELSE(NOT(CHECK_ARG(__VA_ARGS__)), ALIAS____(init_macro_construct_cc, __EXPAND_1 PARAM_IN_PAREN, 0, __EXPAND_1 STATE)) \
      (ASSERT_ARG_0(SIGEMPTY, ","ARG, __VA_ARGS__)))
 
-#define INIT_MACRO_CONSTRUCT(FUNC, OBJ, MEMTYPE, ARR_MARKER, TYPE,  ...)\
-  FUNC(OBJ.self, "<list::object>"#OBJ, MEMTYPE, ARR_MARKER, NUMAR___G(__VA_ARGS__), sizeof IF_ELSE(ARR_MARKER, (TYPE*))((TYPE)), (void *) IF_ELSE(ARR_MARKER, (TYPE*[]))((TYPE[])){__VA_ARGS__})
+#define init_macro_construct_cc(func, obj, memtype, arr_marker, type, rge_marker, ...) \
+  func(obj.self, "<list::object>"#obj, (cc_marker){memtype, arr_marker, rge_marker, sizeof IF_ELSE(arr_marker, (type*))((type)), NUMAR___G(__VA_ARGS__)}, (void *) IF_ELSE(arr_marker, (type*[]))((type[])){__VA_ARGS__})

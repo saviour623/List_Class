@@ -37,13 +37,15 @@
 const string_t magcol__(const string_t const name, string_t const restrict arg, string_t varargs);
 */
 typedef char * string_t;
-const char *errmsg__[6] = {\
+const char *errmsg__[9] = {\
   "function must be called with an object pointer to type 'list' as its first argument",\
   "empty parenthesis is not suppported in array type",
   "array forbids parenthesis as or around its first argument",
   "array members must be bounded by parenthesis",
   "passing an empty argument to array",
-  "argument is of  unknown type"
+  "argument is of  unknown type",
+  "calling range with an empty argument as its first argument",
+  "number of arguments passed to range is out of bound (range only requires maximum of 3 arguments)"
 };
 #define ERR_RED(...) "\033[1;31m" __VA_ARGS__ "\033[1;0m"
 

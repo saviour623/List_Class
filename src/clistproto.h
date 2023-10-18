@@ -47,7 +47,15 @@ typedef struct objmethod objmethod {
   void (*add)(struct Object_List *, void *);
   void (*config_addData)(Object_List *, bool, size_t, size_t, bool, void *);
   void (*remove)(struct Object_List *,  ...);
-}
+};
+typedef struct cc_markers cc_markers;
+struct cc_markers {
+  int8_t memtype;
+  int8_t arr_marker;
+  int8_t range_marker;
+  size_t sizeOf_type;
+  size_t numargs;
+};
 
 static void logerror(unsigned int signal); /* log error message if debug mode is set */
 
@@ -107,7 +115,10 @@ static void logerror(unsigned int signal); /* log error message if debug mode is
   CAT(if_and_only_if_range_, RANGE_CHECK(ALIAS____(CHOOSE_1, __VA_ARGS__)))\
     (init, obj, memtype, arr_marker, IF_ELSE(type, type)(obj ##_clst_lltype), __VA_ARGS__) \
 
-#define if_and_only_if_range_1(...) range
+#define if_and_only_if_range_1(func, obj, memtype, arr_marker, type, rge_arg, ...)\
+  range_redirect_init_cc(EXTRACT_RANGE_PARAM(__EXPAND_1 ALIAS____(CHOOSE_2_ARG, __EXPAND_1 rge_arg)), func, obj, memtype, arr_marker, type)
+#define range_redirect_init_cc(range_param, ...)\ range_param
+  IF_ELSE(PARENTHESIS(range_param), init_macro_construct_cc(__VA_ARGS__, 1, __EXPAND_1 range_param))(ASERT_ARG_)
 #define if_and_only_if_range_0(...) ARRAY(__VA_ARGS__)
 
 #define ____typeof_unspecified_mem(type, ...) \
