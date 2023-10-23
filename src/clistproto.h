@@ -16,46 +16,50 @@
 #define uintptr uintmax_t
 #endif
 */
-static void addData(Object *objself, bool pointer, size_t sizeofarr, size_t sizeofsingle_entity, bool groupmarker, void *data);
-void init(Object_List *object, static const char * nameoflistobj, void *data);
-void destroy(Object_List *objself);
-static void remfromlist(Object_List *objself, ...);
-
 
 typedef struct genlist genlist;
 typedef struct Object_List Object_List;
 
 struct genlist {
   void *data;
+  int range_tmp;
   struct genlist *forward_node;
   struct genlist * backward_node;
 };
 
-typedef struct Object_List {
+struct Object_List {
   struct genlist *list;
   struct genlist *last; //for now it points at list but "last" will always point to end of node
-  struct Object_List *objself;
+  struct Object_List *self;
   char * const loc_obj_name;
   uintmax_t track_items;
   uintptr_t cll_local_address;
   void (*add)(struct Object_List *, void *); //will also assign type
   void (*config_addData)(Object_List *, bool, size_t, size_t, bool, void *);
   void (*remove)(struct Object_List *,  ...);
-} cclist_obj_t;
+};
+typedef Object_List cclist_obj_t;
 
-typedef struct objmethod objmethod {
+
+typedef struct objmethod objmethod;
+struct objmethod {
   void (*add)(struct Object_List *, void *);
   void (*config_addData)(Object_List *, bool, size_t, size_t, bool, void *);
   void (*remove)(struct Object_List *,  ...);
 };
-typedef struct cc_markers cc_markers;
-struct cc_markers {
+typedef struct cc_marker cc_marker;
+struct cc_marker {
   int8_t memtype;
   int8_t arr_marker;
   int8_t range_marker;
   size_t sizeOf_type;
   size_t numargs;
 };
+
+static void addData(Object_List *objself, bool pointer, size_t sizeofarr, size_t sizeofsingle_entity, bool groupmarker, void *data);
+void init(Object_List *, char * const, struct cc_marker, void *);
+void destroy(Object_List *objself);
+static void remfromlist(Object_List *objself, ...);
 
 static void logerror(unsigned int signal); /* log error message if debug mode is set */
 
@@ -83,6 +87,14 @@ static void logerror(unsigned int signal); /* log error message if debug mode is
 
 #define try_dual_choice_expand(cond, prefix, choice_1, choice_2)	\
   CAT(prefix, IF_ELSE(cond, choice_1)(choice_2))
+
+#if defined cT
+#undef cT
+#elif defined cP
+#undef cP
+#elif defined cR
+#undef cR
+#endif
 
 #define clst_macrorep_cT ______clstype
 #define clst_macrorep_cP ______clsptr

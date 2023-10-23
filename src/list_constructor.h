@@ -6,7 +6,7 @@
 #if __GNUC__
 /*#pragma GCC diagnostic ignored "-Wunused-macros"*/
 #endif
-static char name__[5] = "list";
+//char name__[5] = "list";
 
 #define HIDE_ARRAY() ARRAY_ARGS
 /* recursive */

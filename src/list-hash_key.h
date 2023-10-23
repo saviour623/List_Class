@@ -1,15 +1,41 @@
 ﻿#include "clistproto.h"
+/**
+typedef struct Object_List {
+  struct genlist *list;
+  struct genlist *last; //for now it points at list but "last" will always point to end of node
+  struct Object_List *objself;
+  char * const loc_obj_name;
+  uintmax_t track_items;
+  uintptr_t cll_local_address;
+  void (*add)(struct Object_List *, void *); //will also assign type
+  void (*config_addData)(Object_List *, bool, size_t, size_t, bool, void *);
+  void (*remove)(struct Object_List *,  ...);
+} cclist_obj_t;
+*/
+/*
+  void *data;
+  int range_tmp;
+  struct genlist *forward_node;
+  struct genlist * backward_node;
+};
 
-void init(Object_List *object, char * const obj_name, struct cc_marker, void *data){
+ */
+void ccl_range(Object_List *object, long start, long stop, long step){
+}
+void init(Object_List *object, char * const obj_name, cc_marker marker, void *data){
+  /*****************************************************************************************
   _object.loc_obj_name = obj_name;
   object->list = malloc(sizeof(list));
   object->list->data = NULL;
+    object->list->forward_node = NULL;
+  object->list->backward_node = NULL;
 
-  object->cll_local_address = (uintptr_t)(self);
   object->track_items = 0;
+  
+  if (marker.range_marker)
+    cc_range(object, *(long *)data, (long *)data[1], (long *)data[2]);
+  object->cll_local_address = (uintptr_t)(self);
 
-  object->list->forward_node = NULL;
-  object->list->backward_node = NULL; 
   object->last = object->list;
 
   object->objself = object;
@@ -28,9 +54,10 @@ void destroy(Object_List *objself){
   objself->list = NULL;
   objself->name = "None";
   objself->items = 0;
-  objself->objself = NULL;
+  objself->objself = NULL;*/
 }
 
+/**
 static void addData(Object *objself, bool pointer, size_t sizeofarr, size_t sizeofsingle_entity, bool groupmarker, void *data){
   integ *newMemory, **point2lastlink;
   char *extractFromVoid __attribute__((unused));
@@ -48,7 +75,7 @@ static void addData(Object *objself, bool pointer, size_t sizeofarr, size_t size
 	abort();
       }
       /* since array has contigious memory, let's assume cache miss is minimal */
-      if (pointer == true)
+/**   if (pointer == true)
 	newMemory->data = (void *)*(char **)(extractFromVoid + (locatorSkip ? sizeofsingle_entity * locatorSkip : 0));
       else
 	newMemory->data = (void *)(char *)(extractFromVoid + (locatorSkip ? sizeofsingle_entity * locatorSkip : 0));
@@ -69,8 +96,8 @@ static void addData(Object *objself, bool pointer, size_t sizeofarr, size_t size
   if (newMemory == NULL){
     /* corrupted memory/failed allocation */
     // if (DEBUG_MODE)
-    //logerror(SIGALLOC);
-    abort();
+    //logerror(SIGALLOC);*/
+/*  abort();
   }
   newMemory->data = data;
   newMemory->type = false;
@@ -81,7 +108,7 @@ static void addData(Object *objself, bool pointer, size_t sizeofarr, size_t size
   *point2lastlink = newMemory;
   objself->items += 1;
 
- end: (void)0; /* Nothing here. End of function */
+  end: (void)0; /* Nothing here. End of function *//**
 }
 
 static void alias_remove_data(Object_List *objself, int numfargs, ...){
