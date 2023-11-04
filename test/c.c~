@@ -1,8 +1,0 @@
-#include <stdio.h>
-
-int i = 56;
-int main (){
-extern int i;
- i = 89;
-  printf("%d\n", i);
-}
