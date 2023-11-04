@@ -20,6 +20,19 @@
   };
 
 */
+#define cc_pop_front(object)							\
+	(*(object ## _clst_lltype *)ccl_pop(object.self, 0))
+#define cc_pop_back(object)							\
+	(*(object ## _clst_lltype *)ccl_pop(object.self, -1))
+
+void *ccl_pop(Object_List *obj, long index)
+{
+	if ( !(index) )
+		return obj->pointer_mem ? (void *)&obj->list->data : obj->list->data;
+	if (index == -1)
+		return obj->pointer_mem ? (void *)&obj->last->data : obj->last->data;
+	return NULL;
+}
 
 void init(Object_List *object, char * const obj_name, cc_marker marker, void *data){
 	object->loc_obj_name = obj_name;
@@ -27,12 +40,12 @@ void init(Object_List *object, char * const obj_name, cc_marker marker, void *da
 	object->list = object->last = NULL;
 	object->track_items = 0;
 
-	printf("rng %d\n", marker.range_marker);
 	if (marker.range_marker)
 		ccl_range(object, *(long *)data, ((long *)data)[1], ((long *)data)[2]);
 	else
 		ccl_add_init(object, data, marker);
 
+	object->pointer_mem = marker.memtype;
 	object->self = object;
 	object->cll_local_address = (uintptr_t)(object->self);
 }

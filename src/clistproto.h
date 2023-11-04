@@ -23,39 +23,40 @@ typedef struct genlist genlist;
 typedef struct Object_List Object_List;
 
 struct genlist {
-  void *data;
-  int range_tmp;
-  struct genlist *f;
-  struct genlist *b;
+	void *data;
+	int range_tmp;
+	struct genlist *f;
+	struct genlist *b;
 };
 
 struct Object_List {
-  struct genlist *list;
-  struct genlist *last;
-  struct Object_List *self;
-  char * loc_obj_name;
-  unsigned long track_items;
-  uintptr_t cll_local_address;
-  void (*add)(struct Object_List *, void *);
-  void (*config_addData)(Object_List *, bool, size_t, size_t, bool, void *);
-  void (*remove)(struct Object_List *,  ...);
+	struct genlist *list;
+	struct genlist *last;
+	struct Object_List *self;
+	char * loc_obj_name;
+	void (*add)(struct Object_List *, void *);
+	void (*config_addData)(Object_List *, bool, size_t, size_t, bool, void *);
+	void (*remove)(struct Object_List *,  ...);
+	unsigned long track_items;
+	uintptr_t cll_local_address;
+	bool pointer_mem;
 };
 typedef Object_List cclist_obj_t;
 
 
 typedef struct objmethod objmethod;
 struct objmethod {
-  void (*add)(struct Object_List *, void *);
-  void (*config_addData)(Object_List *, bool, size_t, size_t, bool, void *);
-  void (*remove)(struct Object_List *,  ...);
+	void (*add)(struct Object_List *, void *);
+	void (*config_addData)(Object_List *, bool, size_t, size_t, bool, void *);
+	void (*remove)(struct Object_List *,  ...);
 };
 typedef struct cc_marker cc_marker;
 struct cc_marker {
-  int8_t memtype;
-  int8_t arr_marker;
-  int8_t range_marker;
-  size_t sizeOf_type;
-  size_t numargs;
+	int8_t memtype;
+	int8_t arr_marker;
+	int8_t range_marker;
+	size_t sizeOf_type;
+	size_t numargs;
 };
 
 void addData(Object_List *objself, bool pointer, size_t sizeofarr, size_t sizeofsingle_entity, bool groupmarker, void *data);

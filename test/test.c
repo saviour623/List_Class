@@ -30,10 +30,21 @@ int main(void){
 	}
 	putchar('\n');
 
-	printf("total: %ld\n", range_list.track_items);
+	/* pop front */
+	printf("%s\n", cc_pop_front(string_list));
+	printf("%ld\n", cc_pop_front(range_list));
+
+	/* pop back */
+	printf("%s\n", cc_pop_back(string_list));
+	printf("%ld\n", cc_pop_back(range_list));
+
+	printf("total: %ld\n", range_list.track_items + string_list.track_items);
+
+	/* delete */
 	ccl_delete(range_list.self);
 	ccl_delete(string_list.self);
-  return 0;
+
+	return 0;
 }
 
 /* put a marker where array and single cant be used */
