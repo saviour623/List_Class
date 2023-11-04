@@ -40,6 +40,8 @@ int main(void){
 
 	printf("total: %ld\n", range_list.track_items + string_list.track_items);
 
+	cc_marker maker;
+	printf("%s\n", 1 ? "hello" : 0 + 0);
 	/* delete */
 	ccl_delete(range_list.self);
 	ccl_delete(string_list.self);

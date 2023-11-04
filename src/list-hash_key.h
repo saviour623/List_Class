@@ -20,13 +20,23 @@
   };
 
 */
+#define ERRMEM 0
+#define ERRNULL 1
+int error_routine(unsigned long err)
+{
+	(void)err;
+	exit(EXIT_FAILURE);
+}
+
 #define cc_pop_front(object)							\
-	(*(object ## _clst_lltype *)ccl_pop(object.self, 0))
+    (*(object ## _clst_lltype *)ccl_pop(object.self, 0))
 #define cc_pop_back(object)							\
 	(*(object ## _clst_lltype *)ccl_pop(object.self, -1))
 
 void *ccl_pop(Object_List *obj, long index)
 {
+	if (obj->list == NULL || obj->list->data == NULL)
+		error_routine(ERRNULL);
 	if ( !(index) )
 		return obj->pointer_mem ? (void *)&obj->list->data : obj->list->data;
 	if (index == -1)
@@ -50,12 +60,6 @@ void init(Object_List *object, char * const obj_name, cc_marker marker, void *da
 	object->cll_local_address = (uintptr_t)(object->self);
 }
 
-#define ERRMEM 0
-void error_routine(unsigned long err)
-{
-	(void)err;
-	exit(EXIT_FAILURE);
-}
 
 #define abs_num(a) ((a) > 0 ? (a) : -(a))
 void ccl_range(Object_List *__restrict__ obj, long start, long stop, long step)
