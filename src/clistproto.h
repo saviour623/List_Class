@@ -13,6 +13,8 @@
 #include <stdbool.h>
 #include "list_constructor.h"
 #include "ccl_range.h"
+#include "../debug/list_error.h"
+
 /**
 #if UINTPTR_T
 #define uintptr uintmax_t

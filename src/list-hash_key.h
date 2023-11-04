@@ -20,13 +20,6 @@
   };
 
 */
-#define ERRMEM 0
-#define ERRNULL 1
-int error_routine(unsigned long err)
-{
-	(void)err;
-	exit(EXIT_FAILURE);
-}
 
 #define cc_pop_front(object)							\
     (*(object ## _clst_lltype *)ccl_pop(object.self, 0))
