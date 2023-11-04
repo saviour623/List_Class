@@ -59,12 +59,12 @@ int main(void){
   newlist.addData(newlist.self, 0, sizeof arr, sizeof arr[0], 1, arr);
   // newlist.addData(newlist.self, sizeof arr, sizeof arr[0], 1, arr);
 
-  ptr = newlist.list; /**
+  ptr = newlist.list;
    while (ptr != NULL){
      printf("%c\n", *(char *)ptr->data);
      ptr = ptr->link;
    }
-   printf("%c\n", *(char *) newlist.last->data); */
+   printf("%c\n", *(char *) newlist.last->data);
   //destroy(newlist.self);
   return 0;
 }
@@ -105,14 +105,11 @@ static void addData(Object *objself, bool pointer, size_t sizeofarr, size_t size
 	abort();
       }
       /* since array has contigious memory, let's assume cache miss is minimal */
-      if (pointer == true){
-	//newMemory->data = (void *)*(uintptr_t **)(uintptr_t)(extractFromVoid + (uintptr_t)(locatorSkip ? sizeofsingle_entity * locatorSkip : 0));
-	printf("%zu ", extractFromVoid + (uintptr_t)(locatorSkip ? sizeofsingle_entity * locatorSkip : 0));
-      }
-      else {
-	//newMemory->data = (void *)(uintptr_t)(extractFromVoid + (locatorSkip ? sizeofsingle_entity * locatorSkip : 0));
-	printf("%zu ", (uintptr_t)((char *)data + (uintptr_t)(locatorSkip ? sizeofsingle_entity * locatorSkip : 0)));
-      }
+      if (pointer == true)
+       newMemory->data = (void *)*(uintptr_t **)(uintptr_t)(extractFromVoid + (uintptr_t)(locatorSkip ? sizeofsingle_entity * locatorSkip : 0));
+      else
+	newMemory->data = (void *)(uintptr_t)(extractFromVoid + (locatorSkip ? sizeofsingle_entity * locatorSkip : 0));
+
       newMemory->link = NULL;
 
        point2lastlink = &objself->last;
@@ -143,5 +140,4 @@ static void addData(Object *objself, bool pointer, size_t sizeofarr, size_t size
   objself->items += 1;
 
  end: (void)0; /* Nothing here. End of function */
-  putchar('\n');
 }

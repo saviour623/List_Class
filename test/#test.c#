@@ -1,4 +1,4 @@
-include "../src/list-hash_key.h"
+#include "../src/list-hash_key.h"
 #include "../src/list_constructor.h"
 #include <time.h>
 #include <stdio.h>
@@ -8,7 +8,7 @@ include "../src/list-hash_key.h"
 #define stop(x) x = clock() - x
 #define print(x) printf("%f\n", x/(double)CLOCKS_PER_SEC)
 
-
+#pragma diagnostic push 
 static void check(char * self){
   //list(repl)(char, self);
 }
@@ -17,7 +17,7 @@ int main(void){
   //ARRAY(add, mylist, 0, 0, int, (1, 2), (3, 4));
   //__EXPAND 1, 2 3
 
-  list()(char_list, ('z', 'a', 'b', 'c', 'd', 'e', 'f'), -);
+  list()(char_list, (=, 'a', 'b', 'c', 'd', 'e', 'f'), -);
 
   // list()(int_list, cc_range(-45, 54, 43));
 

@@ -1,0 +1,1 @@
+-Wall -Wextra -ftrack-macro-expansion=0 -std=gnu17 -Wpedantic
