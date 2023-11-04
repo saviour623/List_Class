@@ -29,6 +29,7 @@ void init(Object_List *object, char * const obj_name, cc_marker marker, void *da
 
 	if (marker.range_marker)
 		ccl_range(object, *(long *)data, ((long *)data)[1], ((long *)data)[2]);
+	ccl_add_init(object, data, marker);
 
 	object->self = object;
 	object->cll_local_address = (uintptr_t)(object->self);
@@ -91,14 +92,14 @@ __attribute__((unused)) static void ccl_add_init(Object_List *obj, void *data, c
 	len = info.numargs;
 	skip = 0;
 
-	printf("sizeof %lu\n", info.sizeOf_type);
 	while ((len--) > 0)
 	{
 		sizeof_skip = info.sizeOf_type * skip;
 
 		if ((n = malloc(sizeof (struct genlist))) == NULL)
 			error_routine(ERRMEM);
-		n->data = info.memtype ? *(unsigned char **)((unsigned char *)data + sizeof_skip) : (unsigned char *)data + sizeof_skip;
+
+		n->data = info.memtype ? *(unsigned char **)((char *)data + sizeof_skip) : (unsigned char *)data + sizeof_skip;
 		n->f = n->b = NULL;
 		skip += 1;
 

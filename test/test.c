@@ -19,9 +19,9 @@ int main(void){
 
 	void *ptr = s;
 
-//	printf("%s, %s\n", *(char **)((char *)ptr + 0), *((char **)((char *)ptr+8)));
+	//	printf("%s, %s\n", *(char **)ptr, *(char **)ptr+8);
 //	list()(range_list, cc_range(10, 2, -2));
-	ccl_add_init(range_list.self, s, mark);
+	//ccl_add_init(range_list.self, s, mark);
 
 	genlist *p = range_list.list;
 
