@@ -1,153 +1,132 @@
 ﻿#include "clistproto.h"
 /**
-typedef struct Object_List {
-  struct genlist *list;
-  struct genlist *last; //for now it points at list but "last" will always point to end of node
-  struct Object_List *objself;
-  char * const loc_obj_name;
-  uintmax_t track_items;
-  uintptr_t cll_local_address;
-  void (*add)(struct Object_List *, void *); //will also assign type
-  void (*config_addData)(Object_List *, bool, size_t, size_t, bool, void *);
-  void (*remove)(struct Object_List *,  ...);
-} cclist_obj_t;
+   typedef struct Object_List {
+   struct genlist *list;
+   struct genlist *last;
+   struct Object_List *objself;
+   char * const loc_obj_name;
+   uintmax_t track_items;
+   uintptr_t cll_local_address;
+   void (*add)(struct Object_List *, void *); //will also assign type
+   void (*config_addData)(Object_List *, bool, size_t, size_t, bool, void *);
+   void (*remove)(struct Object_List *,  ...);
+   } cclist_obj_t;
 */
 /*
   void *data;
   int range_tmp;
   struct genlist *forward_node;
   struct genlist * backward_node;
-};
+  };
 
- */
-void ccl_range(Object_List *object, long start, long stop, long step){
-}
+*/
+
 void init(Object_List *object, char * const obj_name, cc_marker marker, void *data){
-  /*****************************************************************************************
-  _object.loc_obj_name = obj_name;
-  object->list = malloc(sizeof(list));
-  object->list->data = NULL;
-    object->list->forward_node = NULL;
-  object->list->backward_node = NULL;
+	object->loc_obj_name = obj_name;
 
-  object->track_items = 0;
-  
-  if (marker.range_marker)
-    cc_range(object, *(long *)data, (long *)data[1], (long *)data[2]);
-  object->cll_local_address = (uintptr_t)(self);
+	object->list = object->last = NULL;
+	object->track_items = 0;
 
-  object->last = object->list;
+	if (marker.range_marker)
+		ccl_range(object, *(long *)data, ((long *)data)[1], ((long *)data)[2]);
 
-  object->objself = object;
-  object->config_addData = addData;
-  object->remove = remfromlist;
+	object->self = object;
+	object->cll_local_address = (uintptr_t)(object->self);
 }
 
-void destroy(Object_List *objself){
-  register uint16_t oo = 0;
-  objself->last = objself->list;
-  while (objself->last != NULL){
-    objself->list = objself->list->link;
-    free(objself->last);
-    objself->last = objself->list;
-  }
-  objself->list = NULL;
-  objself->name = "None";
-  objself->items = 0;
-  objself->objself = NULL;*/
+#define ERRMEM 0
+void error_routine(unsigned long err)
+{
+	(void)err;
+	exit(EXIT_FAILURE);
 }
 
-/**
-static void addData(Object *objself, bool pointer, size_t sizeofarr, size_t sizeofsingle_entity, bool groupmarker, void *data){
-  integ *newMemory, **point2lastlink;
-  char *extractFromVoid __attribute__((unused));
-  uintptr_t locatorSkip __attribute__((unused));
-  size_t overalsize = sizeofsingle_entity ? sizeofarr / sizeofsingle_entity : 0;
+#define abs_num(a) ((a) > 0 ? (a) : -(a))
+void ccl_range(Object_List *__restrict__ obj, long start, long stop, long step)
+{
+	struct genlist *n, **ptr_last;
+	int abs_st = 0, oo, tmp_st;
 
-  if (groupmarker == true){
-    extractFromVoid = (char *)data;
-    locatorSkip = 0;
+	if (step == 0)
+		step = 1;
 
-    oversize -= 1;
-    while (overalsize != 0) {
-      newMemory = malloc(sizeof(integ));
-      if (newMemory == NULL){
-	abort();
-      }
-      /* since array has contigious memory, let's assume cache miss is minimal */
-/**   if (pointer == true)
-	newMemory->data = (void *)*(char **)(extractFromVoid + (locatorSkip ? sizeofsingle_entity * locatorSkip : 0));
-      else
-	newMemory->data = (void *)(char *)(extractFromVoid + (locatorSkip ? sizeofsingle_entity * locatorSkip : 0));
-      newMemory->link = NULL;
+	if ((start > stop && step > 0) || (start == stop) || (start < stop && stop < 0))
+		return;
 
-       point2lastlink = &objself->last;
-       (*point2lastlink)->link = newMemory;
-       *point2lastlink = newMemory;
-       objself->items += 1;
+	oo = abs_num(stop - start);
+	abs_st = abs_num(step);
+	tmp_st = step;
+	step = 0;
 
-      locatorSkip += 1;
-      overalsize -= 1;
+	do {
+		oo -= abs_st;
 
+		if ((n = malloc(sizeof (struct genlist))) == NULL)
+			error_routine(ERRMEM);
+		n->range_tmp = start = (start + step);
+		n->data = &n->range_tmp;
+		step = tmp_st;
+		n->f = n->b = NULL;
+		obj->track_items += 1;
+
+		if (obj->list == NULL)
+		{
+			ptr_last = &obj->list;
+			obj->last = *ptr_last = n;
+			continue;
+		}
+		n->b = obj->last;
+		ptr_last = &obj->last;
+		*ptr_last = (*ptr_last)->f = n;
+
+	} while (oo > 0);
+}
+
+__attribute__((unused)) static void ccl_add_init(Object_List *obj, void *data, cc_marker info)
+{
+	struct genlist *n, **ptr_last;
+	size_t skip, sizeof_skip, len;
+
+	obj->track_items += info.numargs;
+	len = info.numargs;
+	skip = 0;
+
+	printf("sizeof %lu\n", info.sizeOf_type);
+	while ((len--) > 0)
+	{
+		sizeof_skip = info.sizeOf_type * skip;
+
+		if ((n = malloc(sizeof (struct genlist))) == NULL)
+			error_routine(ERRMEM);
+		n->data = info.memtype ? *(unsigned char **)((unsigned char *)data + sizeof_skip) : (unsigned char *)data + sizeof_skip;
+		n->f = n->b = NULL;
+		skip += 1;
+
+		if (obj->list == NULL)
+		{
+			ptr_last = &obj->list;
+			obj->last = *ptr_last = n;
+			continue;
+		}
+		n->b = obj->last;
+		ptr_last = &obj->last;
+		*ptr_last = (*ptr_last)->f = n;
     }
-    goto end;
-  }
-  newMemory = malloc(sizeof(integ));
-  if (newMemory == NULL){
-    /* corrupted memory/failed allocation */
-    // if (DEBUG_MODE)
-    //logerror(SIGALLOC);*/
-/*  abort();
-  }
-  newMemory->data = data;
-  newMemory->type = false;
-  newMemory->link = NULL;
-
-  point2lastlink = &objself->last;
-  (*point2lastlink)->link = newMemory;
-  *point2lastlink = newMemory;
-  objself->items += 1;
-
-  end: (void)0; /* Nothing here. End of function *//**
 }
 
-static void alias_remove_data(Object_List *objself, int numfargs, ...){
-  if (numfargs == 0)
-    return;
-  va_list args;
-  va_start(args, numfargs);
+void ccl_delete(Object_List *obj)
+{
+	struct genlist *n;
 
-  void *forceConvert __attribute__((unused)), **retaiNvoid;
-  double dbl_val;  //__attribute__((unused));
+	if (obj->list == NULL)
+		return;
 
-  TYPE_DATA(numeric_args_t);
-  //PROBLEM: How can data be mapped to  numeric  keys, and predetermine their types since there is no provision for template??
-    va_end(args);
+	while (obj->list != NULL)
+	{
+		n = obj->list;
+		obj->list = obj->list->f;
+		free(n);
+	}
+	obj->last = NULL;
+	obj->list = NULL;
 }
-
-static void remfromlist(Object_List *objself, ...){
-  va_list optionArg;
-  va_start(optionArg, objself);
-
-  int index = 1; //what if index is = -1 or negative? what should we do
-  genlist *ptr = objself->list;
-
-  if (index == 0){
-    objself->list = objself->list->link;
-    free(ptr);
-    ptr = NULL;
-    objself->items -= 1;
-    return;
-  }
-
-  while (--index)
-    ptr = ptr->link;
-  genlist *fptr = ptr->link, *nextlinkptr = ptr->link->link;
-  ptr->link = nextlinkptr;
-  free(fptr);
-  fptr = NULL;
-  objself->items -= 1;
-}
-
-/** modify list(HEAD) without changing the posiion of list(HEAD) pointer, we need a pointer...
-      to list(HEAD) but we also want to update list(HEAD), so a double pointer is needed. @objself->last is our pointer and @tmpself is ...*/

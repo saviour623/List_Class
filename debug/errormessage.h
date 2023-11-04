@@ -49,7 +49,7 @@ const char *errmsg__[9] = {\
 };
 #define ERR_RED(...) "\033[1;31m" __VA_ARGS__ "\033[1;0m"
 char name__[] = "list";
-static string_t magcol__(string_t const name, string_t const arg, string_t varargs){
+string_t magcol__(string_t const name, string_t const arg, string_t varargs){
 
   static char buffer[1024];
   sprintf(buffer, "%s(%s%s%s%s)", name,				\

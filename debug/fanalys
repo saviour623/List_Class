@@ -1,0 +1,2 @@
+-Wanalyzer-malloc-leak -Wanalyzer-null-dereference Wanalyzer-free-of-non-heap -Wanalyzer-possible-null-dereference -Wanalyzer-mismatching-deallocation -Wanalyzer-shift-count-negative -Wanalyzer-shift-count-overflow -Wanalyzer-write-to-const
+-Wanalyzer-write-to-string-literal

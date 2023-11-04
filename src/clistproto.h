@@ -1,6 +1,8 @@
 #ifndef CLISTPROTO_H
 #define CLISTPROTO_H
 
+#pragma GCC diagnostic ignored "-Wpedantic"
+
 #include <math.h>
 #include <stdlib.h>
 #include <limits.h>
@@ -23,18 +25,18 @@ typedef struct Object_List Object_List;
 struct genlist {
   void *data;
   int range_tmp;
-  struct genlist *forward_node;
-  struct genlist * backward_node;
+  struct genlist *f;
+  struct genlist *b;
 };
 
 struct Object_List {
   struct genlist *list;
-  struct genlist *last; //for now it points at list but "last" will always point to end of node
+  struct genlist *last;
   struct Object_List *self;
-  char * const loc_obj_name;
-  uintmax_t track_items;
+  char * loc_obj_name;
+  unsigned long track_items;
   uintptr_t cll_local_address;
-  void (*add)(struct Object_List *, void *); //will also assign type
+  void (*add)(struct Object_List *, void *);
   void (*config_addData)(Object_List *, bool, size_t, size_t, bool, void *);
   void (*remove)(struct Object_List *,  ...);
 };
@@ -56,12 +58,13 @@ struct cc_marker {
   size_t numargs;
 };
 
-static void addData(Object_List *objself, bool pointer, size_t sizeofarr, size_t sizeofsingle_entity, bool groupmarker, void *data);
+void addData(Object_List *objself, bool pointer, size_t sizeofarr, size_t sizeofsingle_entity, bool groupmarker, void *data);
+static void ccl_add_init(Object_List *obj, void *, cc_marker);
 void init(Object_List *, char * const, struct cc_marker, void *);
+void ccl_range(Object_List *object, long start, long stop, long step);
 void destroy(Object_List *objself);
-static void remfromlist(Object_List *objself, ...);
-
-static void logerror(unsigned int signal); /* log error message if debug mode is set */
+void remfromlist(Object_List *objself, ...);
+void logerror(unsigned int signal); /* log error message if debug mode is set */
 
 //TODO: IF GROUP MAKER IN ARRAY, SIGNAL FUNC TO ISOLATE MEMBERS
 #define FIND_PAREN_PASS() FIND_PARENTHESIS
@@ -122,24 +125,27 @@ static void logerror(unsigned int signal); /* log error message if debug mode is
 #define make_list(memtype, obj, type, grpmaker, ...) clst_init_list(memtype, obj, type, grpmaker, __VA_ARGS__)
 
 #define clst_init_list(memtype, obj, type, arr_marker, ...)		\
-  typedef ____typeof_unspecified_mem(type, __VA_ARGS__) obj ##_clst_lltype; \
-  cclist_obj_t obj; struct objmethod obj ## _method;\
+  typedef ____typeof_unspecified_mem(type, __VA_ARGS__) obj ##_clst_lltype __attribute__((unused)); \
+  cclist_obj_t obj; struct objmethod obj ## _method __attribute__((unused)); \
   CAT(if_and_only_if_range_, RANGE_CHECK(ALIAS____(CHOOSE_1, __VA_ARGS__)))\
     (init, obj, memtype, arr_marker, IF_ELSE(type, type)(obj ##_clst_lltype), __VA_ARGS__) \
 
+/* select range/array */
 #define if_and_only_if_range_1(func, obj, memtype, arr_marker, type, rge_arg, ...)\
   range_redirect_init_cc(EXTRACT_RANGE_PARAM(__EXPAND_1 ALIAS____(CHOOSE_2_ARG, __EXPAND_1 rge_arg)), func, obj, memtype, arr_marker, long)
 #define range_redirect_init_cc(range_param, ...)\
   IF_ELSE(PARENTHESIS(range_param), init_macro_construct_cc(__VA_ARGS__, 1, __EXPAND_1 range_param))(ASERT_ARG_)
 #define if_and_only_if_range_0(...) ARRAY(__VA_ARGS__)
 
+/* select type, if type is not provided use the typeof() of the first member of the list */
 #define ____typeof_unspecified_mem(type, ...) \
   IF_ELSE(type, type)(IF_ELSE(RANGE_CHECK(CHOOSE_ARG(__VA_ARGS__)), long)\
-		      (__typeof__(NULL, ALIAS____(CHOOSE_1, CHOOSE_ARG(__EXPAND_1 __VA_ARGS__)))))
+		      (__typeof__((void)0, ALIAS____(CHOOSE_1, CHOOSE_ARG(__EXPAND_1 __VA_ARGS__)))))
 
 //TODO: init (should have range maker)
 #define SECARG_INEXP(INPAREN) ALIAS____(CHOOSE_2_ARG, __EXPAND1 INPAREN)
 #define uninitialize(_object)(destroy(&_object))
 
 /* TODO: all erorrs are not working as expected - work on it later on */
+
 #endif /* CLISTPROTO_H */

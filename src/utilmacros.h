@@ -1,5 +1,7 @@
 #ifndef _UTILMACROS_
 #define _UTILMACROS_
+#pragma GCC diagnostic ignored "-Wpedantic"
+
 /* ____SWITCH_____ */
 #define SWITCH(val) CONCAT_EXPAND(__EXPAND_, BOOL(val))
 #define __EXPAND_1(...) __VA_ARGS__
@@ -77,7 +79,9 @@
 
 #define PARENTHESIS(ARG, ...)						\
   IF_ELSE(NOT(FIND_PAREN_PAREN(ARG)), IF_ELSE(CATCH_EXPAND ARG, 0)(1))(0)
-#define CATCH_EXPAND(...) 0 /* catch_expand arg expands to zero if arg is parenthesis
+
+/* catch_expand arg expands to zero if arg is parenthesis */
+#define CATCH_EXPAND(...) 0
 
 /* CONCATING MACROS */
 #define CAT(A, B) CONCAT_EXPAND(A, B) /* alias for CONCAT_EXPAND */
@@ -90,9 +94,6 @@
 /*----- __CHECK_ARG__ - CHECKS FOR ARGUMENT, INCLUDING PARENTHESIS */
 #define CHECK_ARG(ARG, ...)					\
   IF_ELSE(NOT(FIND_PAREN_PAREN(ARG)), UNLESS_FALSE(PARENTHESIS(ARG))(NON_EMPTY_VA_ARGS(ARG)))(0)
-
-//#define CHECK_ARG(ARG, ...)					\
-  UNLESS_FALSE(PARENTHESIS(ARG))(NON_EMPTY_VA_ARGS(ARG))
 
 /* __ALIAS__ - RUNS ANY MACRO PRIVATELY */
 #define ALIAS____(____MACRO__, ...) ____MACRO__(__VA_ARGS__)
