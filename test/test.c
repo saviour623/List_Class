@@ -15,7 +15,6 @@ int main(void){
 
 	genlist *p = string_list.list;
 	genlist *s = range_list.list;
-	genlist *c = char_list.list;
 
 	/* string */
 	while (p != NULL)
@@ -33,6 +32,8 @@ int main(void){
 	}
 	putchar('\n');
 
+	ccl_remove(&char_list, -1);
+	genlist *c = char_list.list;
 	/* character */
 	while (c != NULL)
 	{
@@ -49,14 +50,14 @@ int main(void){
 	/* pop back */
 	printf("back: %s\n", cc_pop_back(string_list));
 	printf("back: %ld\n", cc_pop_back(range_list));
-	printf("back: %c\n", cc_pop_back(char_list));
+	//printf("back: %c\n", cc_pop_back(char_list));
 
 	printf("total: %ld\n", range_list.track_items + string_list.track_items + char_list.track_items);
 
 	/* delete */
-	ccl_delete(range_list.self);
-	ccl_delete(string_list.self);
-	ccl_delete(char_list.self);
+//	ccl_delete(range_list.self);
+//	ccl_delete(string_list.self);
+//	ccl_delete(char_list.self);
 
 	return 0;
 }

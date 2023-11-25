@@ -1,28 +1,10 @@
-﻿#include "clistproto.h"
-/**
-   typedef struct Object_List {
-   struct genlist *list;
-   struct genlist *last;
-   struct Object_List *objself;
-   char * const loc_obj_name;
-   uintmax_t track_items;
-   uintptr_t cll_local_address;
-   void (*add)(struct Object_List *, void *); //will also assign type
-   void (*config_addData)(Object_List *, bool, size_t, size_t, bool, void *);
-   void (*remove)(struct Object_List *,  ...);
-   } cclist_obj_t;
-*/
-/*
-  void *data;
-  int range_tmp;
-  struct genlist *forward_node;
-  struct genlist * backward_node;
-  };
+﻿#ifndef CCL_LIST_H
+#define CCL_LIST_H
+#include "clistproto.h"
 
-*/
-
+#define __UNUSED__ __attribute__((unused))
 #define cc_pop_front(object)							\
-    (*(object ## _clst_lltype *)ccl_pop(object.self, 0))
+	(*(object ## _clst_lltype *)ccl_pop(object.self, 0))
 #define cc_pop_back(object)							\
 	(*(object ## _clst_lltype *)ccl_pop(object.self, -1))
 
@@ -37,7 +19,8 @@ void *ccl_pop(Object_List *obj, long index)
 	return NULL;
 }
 
-void init(Object_List *object, char * const obj_name, cc_marker marker, void *data){
+void init(Object_List *object, char * const obj_name, cc_marker marker, void *data)
+{
 	object->loc_obj_name = obj_name;
 
 	object->list = object->last = NULL;
@@ -95,7 +78,7 @@ void ccl_range(Object_List *__restrict__ obj, long start, long stop, long step)
 	} while (oo > 0);
 }
 
-__attribute__((unused)) static void ccl_add_init(Object_List *obj, void *data, cc_marker info)
+__UNUSED__ static void ccl_add_init(Object_List *obj, void *data, cc_marker info)
 {
 	struct genlist *n, **ptr_last;
 	size_t skip, sizeof_skip, len;
@@ -124,9 +107,41 @@ __attribute__((unused)) static void ccl_add_init(Object_List *obj, void *data, c
 		n->b = obj->last;
 		ptr_last = &obj->last;
 		*ptr_last = (*ptr_last)->f = n;
-    }
+	}
 }
 
+__attribute__((nonnull)) void ccl_remove(Object_List *obj, int which)
+{
+	genlist *ptr = obj->list, **tmp __UNUSED__;
+
+	if (ptr == NULL)
+		error_routine(0 /*warning attempting to remove from an empty list */);
+	if (which < 0)
+		which = obj->track_items + which;
+	if (which > obj->track_items || which < 0)
+		error_routine(0/* seeked index cannot be found */);
+
+	--obj->track_items;
+	if (which == 0){
+		obj->list = obj->list->f;
+		obj->list->b = NULL;
+		goto free;
+	}
+	else if (which == obj->track_items)
+	{
+		ptr = obj->last;
+		obj->last = obj->last->b;
+		obj->last->f = NULL;
+		goto free;
+	}
+	while (which-- && (ptr = ptr->f))
+		;
+	tmp = &ptr;
+	(*tmp)->b->f = (*tmp)->f;
+free:
+	free(ptr);
+	ptr = NULL;
+}
 void ccl_delete(Object_List *obj)
 {
 	struct genlist *n;
@@ -143,3 +158,5 @@ void ccl_delete(Object_List *obj)
 	obj->last = NULL;
 	obj->list = NULL;
 }
+
+#endif
