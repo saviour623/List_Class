@@ -142,6 +142,45 @@ free:
 	free(ptr);
 	ptr = NULL;
 }
+
+#define __CCL_TYPEOF__(d) (__typeof__(((void)0, d)))
+#define __CCL_SIZEOF__(d) (__sizeof__(((void)0, d)))
+#define LIST_SIZE_MAX 256
+#define cc_slice(obj, s, e, d)									\
+	slice(obj, s, e, __CCL_SIZEOF__(d), (__CCL_TYPEOF__(d)[LIST_SIZE_MAX]){data});
+
+//!(x < LIST_SIZE_MAX) ? ((typeof (data)[x])(data)) : malloc(sizeof (data) * size);
+void slice(Object_List *obj, int sl_s, int sl_e, size_t siz, void *data)
+{
+	genlist *sl_sp, *sl_ep;
+	register long list_cnt = obj->track_items, rg_val, rg_mean, oo;
+	static int x = 5;
+
+	if (sl_s == sl_e)
+		; /* just replace */
+	sl_e = list_cnt - sl_e;
+	if (sl_e > list_cnt)
+		; /* not good */
+
+	sl_sp = obj->list;
+	sl_ep = obj->last;
+	rg_val = sl_e - sl_s;
+	rg_mean = (unsigned long)rg_val >> 1;
+
+	for (;;)
+	{
+		if (sl_s--)
+			sl_sp = sl_sp->f;
+		if (sl_e--)
+			sl_ep = sl_ep->b;
+		if (sl_s == 0 && sl_e == 0)
+			break;
+	}
+	while (rg_hmean--)
+	{
+		sl_sp->data = obj->pointer_mem ? *(unsigned char **)((char *)data++) : (unsigned char *)data++;
+	}
+}
 void ccl_delete(Object_List *obj)
 {
 	struct genlist *n;

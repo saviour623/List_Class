@@ -8,7 +8,8 @@
 #define stop(x) x = clock() - x
 #define print(x) printf("%f\n", x/(double)CLOCKS_PER_SEC)
 
-int main(void){
+int main(void)
+{
 	list(cP)(string_list, "hello", "this is me");
 	list()((char_list, char), cc_range('a', 'z'));
 	list()(range_list, cc_range(10, 2, -1));
@@ -32,7 +33,7 @@ int main(void){
 	}
 	putchar('\n');
 
-	ccl_remove(&char_list, -1);
+//	ccl_remove(&char_list, -4);
 	genlist *c = char_list.list;
 	/* character */
 	while (c != NULL)
@@ -50,15 +51,17 @@ int main(void){
 	/* pop back */
 	printf("back: %s\n", cc_pop_back(string_list));
 	printf("back: %ld\n", cc_pop_back(range_list));
-	//printf("back: %c\n", cc_pop_back(char_list));
+	printf("back: %c\n", cc_pop_back(char_list));
 
 	printf("total: %ld\n", range_list.track_items + string_list.track_items + char_list.track_items);
 
-	/* delete */
-//	ccl_delete(range_list.self);
-//	ccl_delete(string_list.self);
-//	ccl_delete(char_list.self);
 
+	/* delete */
+	ccl_delete(range_list.self);
+	ccl_delete(string_list.self);
+	ccl_delete(char_list.self);
+
+	p = s = c = NULL;
 	return 0;
 }
 
