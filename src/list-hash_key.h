@@ -176,9 +176,16 @@ void slice(Object_List *obj, int sl_s, int sl_e, size_t siz, void *data)
 		if (sl_s == 0 && sl_e == 0)
 			break;
 	}
-	while (rg_hmean--)
+	while (rg_mean--)
 	{
-		sl_sp->data = obj->pointer_mem ? *(unsigned char **)((char *)data++) : (unsigned char *)data++;
+		if (obj->pointer_mem)
+		{
+			sl_sp->data = *(unsigned char **)((char *)data)++;
+			sl_se->data = *(unsigned char **)((char *)data++);
+			continue;
+		}
+		sl_sp->data = (char *)data++;
+		sl_se->data = (char *)data++;
 	}
 }
 void ccl_delete(Object_List *obj)

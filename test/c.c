@@ -1,10 +1,9 @@
 #include <stdio.h>
 
 int main (){
-  int i = 1;
-
-  while (i < 10001){
-    printf("%d, ", i);
-    i++;
-  }
+	char s[8] = "help me";
+	void *g = s;
+	int oo = 0;
+	while (oo++ < 8)
+		putchar(*(char *)g++);
 }
