@@ -15,7 +15,6 @@ int main(void)
 	list()(range_list, cc_range(10, 2, -1));
 
 	genlist *p = string_list.list;
-	genlist *s = range_list.list;
 
 	/* string */
 	while (p != NULL)
@@ -26,6 +25,8 @@ int main(void)
 	putchar('\n');
 
 	/* integer */
+	slice(&range_list, -4, 3, 3, NULL);
+	genlist *s = range_list.list;
 	while (s != NULL)
 	{
 		printf("%ld ", *(range_list_clst_lltype *)(s->data));
@@ -33,7 +34,7 @@ int main(void)
 	}
 	putchar('\n');
 
-//	ccl_remove(&char_list, -4);
+	ccl_remove(&char_list, -4);
 	genlist *c = char_list.list;
 	/* character */
 	while (c != NULL)

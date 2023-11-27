@@ -40,8 +40,8 @@ void init(Object_List *object, char * const obj_name, cc_marker marker, void *da
 #define abs_num(a) ((a) > 0 ? (a) : -(a))
 void ccl_range(Object_List *__restrict__ obj, long start, long stop, long step)
 {
-	struct genlist *n, **ptr_last;
-	int abs_st = 0, oo, tmp_st;
+	struct genlist *n = NULL, **ptr_last = NULL;
+	int abs_st = 0, oo = 0, tmp_st = 0;
 
 	if (step == 0)
 		step = 1;
@@ -146,47 +146,61 @@ free:
 #define __CCL_TYPEOF__(d) (__typeof__(((void)0, d)))
 #define __CCL_SIZEOF__(d) (__sizeof__(((void)0, d)))
 #define LIST_SIZE_MAX 256
-#define cc_slice(obj, s, e, d)									\
+
+#define cc_slice(obj, s, e, d)											\
 	slice(obj, s, e, __CCL_SIZEOF__(d), (__CCL_TYPEOF__(d)[LIST_SIZE_MAX]){data});
 
 //!(x < LIST_SIZE_MAX) ? ((typeof (data)[x])(data)) : malloc(sizeof (data) * size);
+/**
+   < -len = 0
+ < 0 = len + st
+>= len = len(add)
+ */
+/* start.x
+ * rem
+we are starting x if rem is 0 - x to end
+
+if inputs given is less than x, and its not single replace only some
+if it is single slice(X, 5) replace (start to stop with 5)
+
+x < -len
+
+(5, 0, 6
+ */
 void slice(Object_List *obj, int sl_s, int sl_e, size_t siz, void *data)
 {
 	genlist *sl_sp, *sl_ep;
 	register long list_cnt = obj->track_items, rg_val, rg_mean, oo;
-	static int x = 5;
+	static long x[3] = {123, 234, 456};
 
-	if (sl_s == sl_e)
-		; /* just replace */
-	sl_e = list_cnt - sl_e;
-	if (sl_e > list_cnt)
-		; /* not good */
+	sl_s = (sl_s < -list_cnt) ? 0
+		: (sl_s < 0) ? sl_s + list_cnt
+		: (sl_s >= list_cnt && sl_e) ? list_cnt /* append to last */ : /* no change */ sl_s;
+
+	if (sl_s != list_cnt)
+		sl_e = (sl_e < 0) ? list_cnt + sl_e
+			: (sl_e > list_cnt) ? list_cnt : /* no change */ sl_e;
+	else
+		sl_e = list_cnt + siz;
+
+	if (sl_e < -list_cnt)
+		goto do_nothing;
 
 	sl_sp = obj->list;
 	sl_ep = obj->last;
-	rg_val = sl_e - sl_s;
-	rg_mean = (unsigned long)rg_val >> 1;
 
-	for (;;)
+	while  (sl_s-- && sl_sp)
+		sl_sp = sl_sp->f;
+
+	siz = 3;
+	while (sl_e-- && siz--)
 	{
-		if (sl_s--)
-			sl_sp = sl_sp->f;
-		if (sl_e--)
-			sl_ep = sl_ep->b;
-		if (sl_s == 0 && sl_e == 0)
-			break;
+		sl_sp->data = (void *)x;
+		sl_sp = sl_sp->f;
 	}
-	while (rg_mean--)
-	{
-		if (obj->pointer_mem)
-		{
-			sl_sp->data = *(unsigned char **)((char *)data)++;
-			sl_se->data = *(unsigned char **)((char *)data++);
-			continue;
-		}
-		sl_sp->data = (char *)data++;
-		sl_se->data = (char *)data++;
-	}
+do_nothing:
+	/* lets do nothing here */
+	(void)0;
 }
 void ccl_delete(Object_List *obj)
 {
@@ -204,5 +218,16 @@ void ccl_delete(Object_List *obj)
 	obj->last = NULL;
 	obj->list = NULL;
 }
-
 #endif
+
+/*
+
+		if (obj->pointer_mem)
+		{
+			sl_sp->data = *(unsigned char **)((char *)data++);
+			sl_ep->data = *(unsigned char **)((char *)data++);
+			continue;
+		}
+		sl_sp->data = (char *)data++;
+		sl_ep->data = (char *)data++;
+*/
