@@ -13,7 +13,8 @@
 	(__builtin_classify_type((T)0) == __builtin_classify_type((void *)0))
 #define _BUFFER(type, n)\
 	(__builtin_assert_ptype(type) ? (void *)((type *[(n)]){0}) : (void *)((type [(n)]){0}))
-#define list(obj, ...)\
+
+#define list(obj, ...)							\
 	do {\
 		if (! __builtin_types_compatible_p(__typeof__(obj), Object_List)) return 0; \
 		if (! CHOOSE_ARG(1 __VA_OPT__(,) - 1)) { abort(); __builtin_unreachable(); } \
@@ -22,7 +23,8 @@
 					0, 0, sizeof (obj ## _clst_lltype), NUMAR___G(__VA_ARGS__)}, \
 			(void *)(_BUFFER(obj ## _clst_lltype, NUMAR___G(__VA_ARGS__))) __VA_OPT__(, __VA_ARGS__)); \
 	} while (0)
-void listp(Object_List *obj, char *obj_name, cc_marker marker, void *bf, ...)
+
+void listp(Object_List *obj, char *obj_name, cc_marker marker, void *buffer, ...)
 {
 	if (obj == NULL)
 		return;

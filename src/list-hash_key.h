@@ -1,24 +1,54 @@
 ﻿#ifndef CCL_LIST_H
 #define CCL_LIST_H
+#if defined(__GNUC__) || defined(__CLANG__)
+/* #define __BUILTIN_LIST_SUPPORT__ */
+    #if defined(GCC_TYPECLASS_H)
+        #include <typeclass.h>
+    #endif
+#endif
+#ifdef LIST_THREAD_SAFE
+    #if USE_PTHREAD_LOCK
+        #define LOCK pthread_lock()
+        #define UNLOCK pthread_unlock()
+    #else
+        #define LOCK thread_lock()
+        #define UNLOCK thread_unlock()
+    #endif
+#endif
 #include "clistproto.h"
 
 #define __UNUSED__ __attribute__((unused))
-#define cc_pop_front(object)							\
-	(*(object ## _clst_lltype *)ccl_pop(object.self, 0))
-#define cc_pop_back(object)							\
-	(*(object ## _clst_lltype *)ccl_pop(object.self, -1))
 
-void *ccl_pop(Object_List *obj, long index)
+#ifdef __BUILTIN_LIST_SUPPORT__
+#include <stdarg.h>
+#undef list
+#define __builtin_assert_ptype(T)\
+	(__builtin_classify_type((T)0) == __builtin_classify_type((void *)0))
+#define _BUFFER(type, n)\
+	(__builtin_assert_ptype(type) ? (void *)((type *[(n)]){0}) : (void *)((type [(n)]){0}))
+#define list(obj, ...)							\
+	do {\
+		if (! __builtin_types_compatible_p(__typeof__(obj), Object_List)) abort(); \
+		if (! CHOOSE_ARG(1 __VA_OPT__(,) - 1)) { abort(); __builtin_unreachable(); } \
+		typedef __typeof__ ((void)0, CHOOSE_ARG(__VA_OPT__(__VA_ARGS__,) (void)0)) obj ## _clst_lltype; \
+		listp(&obj, #obj, (cc_marker){__builtin_assert_ptype(obj ## _clst_lltype), \
+					0, 0, sizeof (obj ## _clst_lltype), NUMAR___G(__VA_ARGS__)}, \
+			(void *)(_BUFFER(obj ## _clst_lltype, NUMAR___G(__VA_ARGS__))) __VA_OPT__(, __VA_ARGS__)); \
+	} while (0)
+
+void init(Object_List *obj, char *obj_name, cc_marker marker, void *buffer, ...)
 {
-	if (obj->list == NULL || obj->list->data == NULL)
-		error_routine(ERRNULL);
-	if ( !(index) )
-		return obj->pointer_mem ? (void *)&obj->list->data : obj->list->data;
-	if (index == -1)
-		return obj->pointer_mem ? (void *)&obj->last->data : obj->last->data;
-	return NULL;
-}
+	va_list listArguments;
 
+	if (obj == NULL || buffer == NULL)
+		return;
+	object->loc_obj_name = obj_name;
+
+	object->list = object->last = NULL;
+	object->track_items = 0;
+	va_start(bufffer, listArguments);
+}
+#else
 void init(Object_List *object, char * const obj_name, cc_marker marker, void *data)
 {
 	object->loc_obj_name = obj_name;
@@ -35,8 +65,7 @@ void init(Object_List *object, char * const obj_name, cc_marker marker, void *da
 	object->self = object;
 	object->cll_local_address = (uintptr_t)(object->self);
 }
-
-
+#endif
 #define abs_num(a) ((a) > 0 ? (a) : -(a))
 void ccl_range(Object_List *__restrict__ obj, long start, long stop, long step)
 {
@@ -142,6 +171,23 @@ free:
 	free(ptr);
 	ptr = NULL;
 }
+
+#define cc_pop_front(object)							\
+	(*(object ## _clst_lltype *)ccl_pop(object.self, 0))
+#define cc_pop_back(object)							\
+	(*(object ## _clst_lltype *)ccl_pop(object.self, -1))
+
+void *ccl_pop(Object_List *obj, long index)
+{
+	if (obj->list == NULL || obj->list->data == NULL)
+		error_routine(ERRNULL);
+	if ( !(index) )
+		return obj->pointer_mem ? (void *)&obj->list->data : obj->list->data;
+	if (index == -1)
+		return obj->pointer_mem ? (void *)&obj->last->data : obj->last->data;
+	return NULL;
+}
+
 
 #define __CCL_TYPEOF__(d) (__typeof__(((void)0, d)))
 #define __CCL_SIZEOF__(d) (__sizeof__(((void)0, d)))
